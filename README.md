@@ -19,6 +19,20 @@
 | 系统维护 | `clean-temp-files`、`folder-size-report`、`port-killer` | 清理临时文件、排查磁盘占用、处理端口占用 |
 | 开发辅助 | `project-cleaner`、`port-killer`、`folder-size-report` | 清理项目缓存、定位开发端口冲突、快速查看项目目录体积 |
 
+## 推荐使用路径
+
+| 你的目标 | 建议先看 | 推荐入口 |
+|---|---|---|
+| 清理 Codex 或其他 npm CLI 升级残留 | `npm-cli-clean/` | `clean-codex-update.cmd` 或 `clean-npm-cli-update.cmd` |
+| 把本地 HTML 页面导出为图片 | `html-to-png/` | `open-html-to-png.cmd` |
+| 把本地 HTML 页面导出为 PDF | `html-to-pdf/` | `open-html-to-pdf.cmd` |
+| 批量修改一批文件名 | `batch-rename/` | `open-batch-rename.cmd` |
+| 批量转换图片格式或缩放图片 | `image-batch-convert/` | `open-image-batch-convert.cmd` |
+| 查哪个进程占用了某个端口 | `port-killer/` | `open-port-killer.cmd` |
+| 快速查看哪个目录最占空间 | `folder-size-report/` | `open-folder-size-report.cmd` |
+| 清理 Windows 临时文件 | `clean-temp-files/` | `open-clean-temp-files.cmd` |
+| 清理 Node / Python 项目缓存目录 | `project-cleaner/` | `open-project-cleaner.cmd` |
+
 ## 项目清单
 
 | 项目 | 说明 | 文档入口 | 主要入口 |
