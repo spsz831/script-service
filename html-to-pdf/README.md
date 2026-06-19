@@ -25,9 +25,10 @@ Version: `1.0.0`
 
 | 项目 | 说明 |
 |---|---|
-| 建议截图 1 | `docs/pdf-export.png` |
-| 建议截图 2 | `docs/pdf-preview.png` |
-| Markdown 示例 | `![PDF Export](docs/pdf-export.png)` |
+| 当前示例图 | `docs/pdf-export.png` |
+| 后续可补 | `docs/pdf-preview.png` |
+
+![PDF Export](docs/pdf-export.png)
 
 ## 参数与说明
 

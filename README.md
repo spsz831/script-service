@@ -12,9 +12,13 @@
 
 ## 预览图
 
-| `npm-cli-clean` | `html-to-png` | `project-cleaner` |
-|---|---|---|
-| ![npm-cli-clean preview](docs/previews/npm-cli-clean.png) | ![html-to-png preview](docs/previews/html-to-png.png) | ![project-cleaner preview](docs/previews/project-cleaner.png) |
+| `npm-cli-clean` | `html-to-png` |
+|---|---|
+| ![npm-cli-clean preview](docs/previews/npm-cli-clean.png) | ![html-to-png preview](docs/previews/html-to-png.png) |
+
+| `html-to-pdf` | `project-cleaner` |
+|---|---|
+| ![html-to-pdf preview](docs/previews/html-to-pdf.png) | ![project-cleaner preview](docs/previews/project-cleaner.png) |
 
 ## 仓库概览
 
