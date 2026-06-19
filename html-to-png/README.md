@@ -4,7 +4,7 @@
 
 Version: `1.0.0`
 
-## Overview
+## 概览
 
 | 项目 | 说明 |
 |---|---|
@@ -15,74 +15,48 @@ Version: `1.0.0`
 | 浏览器依赖 | Edge 或 Chrome |
 | 默认输出 | 同目录下 `-fullpage.png` |
 
-## Quick Start
+## 快速开始
 
-### 图形界面方式
+| 场景 | 命令 / 入口 |
+|---|---|
+| 图形界面方式 | `open-html-to-png.cmd` |
+| 命令行方式 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml .\demo.html` |
+| 指定输出文件 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml .\demo.html -OutputImage .\demo-fullpage.png` |
 
-直接双击：
+| 图形界面流程 | 说明 |
+|---|---|
+| 1 | 弹出文件选择框选择本地 HTML 文件 |
+| 2 | 弹出保存框选择 PNG 输出位置 |
+| 3 | 调用本机 Edge 或 Chrome 无头模式截图 |
 
-```bat
-open-html-to-png.cmd
-```
+## 预览与截图
 
-脚本会：
+| 项目 | 说明 |
+|---|---|
+| 建议截图 1 | `docs/gui-select.png` |
+| 建议截图 2 | `docs/output-example.png` |
+| Markdown 示例 | `![GUI Select](docs/gui-select.png)` |
 
-1. 弹出文件选择框选择本地 HTML 文件
-2. 弹出保存框选择 PNG 输出位置
-3. 调用本机 Edge 或 Chrome 无头模式截图
+## 参数说明
 
-### 命令行方式
+| 参数 | 说明 |
+|---|---|
+| `-InputHtml` | 必填。本地 HTML 文件路径，支持 `.html` 和 `.htm` |
+| `-OutputImage` | 可选。输出 PNG 路径；不填时默认输出到 HTML 同目录，文件名后缀为 `-fullpage.png` |
+| `-Width` | 可选。浏览器窗口宽度，默认 `1440` |
+| `-Height` | 可选。浏览器窗口高度，默认 `12000` |
+| `-BrowserPath` | 可选。手动指定浏览器路径 |
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml .\demo.html
-```
+## 浏览器要求
 
-也可以指定输出文件：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml .\demo.html -OutputImage .\demo-fullpage.png
-```
-
-## Preview
-
-建议后续补一张 GUI 选择流程截图或导出结果截图，放在：
-
-- `docs/gui-select.png`
-- `docs/output-example.png`
-
-Markdown 引用示例：
-
-```md
-![GUI Select](docs/gui-select.png)
-```
-
-## Parameters
-
-- `-InputHtml`
-  必填。本地 HTML 文件路径，支持 `.html` 和 `.htm`
-
-- `-OutputImage`
-  可选。输出 PNG 路径；不填时默认输出到 HTML 同目录，文件名后缀为 `-fullpage.png`
-
-- `-Width`
-  可选。浏览器窗口宽度，默认 `1440`
-
-- `-Height`
-  可选。浏览器窗口高度，默认 `12000`
-
-- `-BrowserPath`
-  可选。手动指定浏览器路径
-
-## Browser Requirements
-
-默认会按顺序检测以下浏览器：
-
-- Microsoft Edge
-- Google Chrome
+| 检测顺序 | 浏览器 |
+|---|---|
+| 1 | Microsoft Edge |
+| 2 | Google Chrome |
 
 如果系统里都没有，脚本会报错，并提示你通过 `-BrowserPath` 指定浏览器路径。
 
-## Project Files
+## 文件清单
 
 | 文件 | 作用 |
 |---|---|
@@ -93,14 +67,18 @@ Markdown 引用示例：
 | `CHANGELOG.md` | 变更记录 |
 | `LICENSE` | 许可证 |
 
-## Notes
+## 使用说明
 
-- 当前脚本主要面向本地单个 HTML 文件
-- 依赖浏览器的无头截图能力，不内置浏览器
-- 更适合静态页面导出，不保证复杂动态页面完全一致
+| 项目 | 说明 |
+|---|---|
+| 输入范围 | 当前主要面向本地单个 HTML 文件 |
+| 依赖 | 依赖浏览器无头截图能力，不内置浏览器 |
+| 适用性 | 更适合静态页面导出，不保证复杂动态页面完全一致 |
 
-## Roadmap
+## 后续计划
 
-- 增加批量处理模式
-- 增加更多截图尺寸预设
-- 评估是否增加自动裁剪或透明背景支持
+| 方向 | 说明 |
+|---|---|
+| 批量处理 | 增加一次处理多个 HTML 文件的能力 |
+| 尺寸预设 | 增加常见截图宽度和高度预设 |
+| 输出增强 | 评估自动裁剪和透明背景支持 |

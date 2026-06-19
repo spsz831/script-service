@@ -4,7 +4,7 @@
 
 Version: `1.0.0`
 
-## Overview
+## 概览
 
 | 项目 | 说明 |
 |---|---|
@@ -16,293 +16,163 @@ Version: `1.0.0`
 | 核心脚本 | `clean-npm-cli-update.ps1` |
 | 配置文件 | `tools.json` |
 
-## Quick Start
-
-### 如果你只想清理 Codex
-
-直接双击：
-
-```bat
-clean-codex-update.cmd
-```
-
-更稳妥的常用方式：
-
-```bat
-clean-codex-update.cmd -SkipCacheClean
-```
-
-### 如果你想用通用交互菜单
-
-直接双击：
-
-```bat
-clean-npm-cli-update.cmd
-```
-
-它会自动检测当前电脑上已知且可直接清理的 npm CLI 工具，并提供交互式选择。
-
-## Preview
-
-建议后续在这里补一张菜单截图，例如：
-
-- 主菜单截图
-- 状态页截图
-- Codex 清理结果截图
-
-如果后续补图，建议放在：
-
-- `docs/main-menu.png`
-- `docs/status-page.png`
-- `docs/codex-clean-result.png`
-
-Markdown 引用示例：
-
-```md
-![Main Menu](docs/main-menu.png)
-```
-
-当前可先通过以下命令预览而不实际执行：
-
-```bat
-clean-codex-update.cmd -WhatIf -SkipCacheClean
-```
-
-## 文件说明
-
-- `clean-npm-cli-update.ps1`
-  通用主脚本。支持指定 npm 包名、命令名、进程名和临时目录匹配规则。
-
-- `clean-npm-cli-update.cmd`
-  通用双击启动器。双击时会自动检测当前电脑上已安装的候选 CLI，并提供交互式选择；也支持手动传参运行。
-
-- `clean-codex-update.cmd`
-  Codex 专用入口。内部会自动带上 Codex 的默认参数，适合直接双击使用。
-
-- `tools.json`
-  已知工具清单配置。后续新增、删除或调整工具规则，优先改这个文件，不需要直接改主脚本。
-
-- `VERSION`
-  当前版本号。
-
-- `CHANGELOG.md`
-  版本变更记录。
-
-- `LICENSE`
-  开源许可证。
-
-- `logs/`
-  日志目录。默认仅保留最近 3 份 `cleanup_*.log`。
-
-## 解决什么问题
-
-适合处理这类情况：
-
-- `npm install -g` 升级 CLI 后提示 `cleanup failed`
-- Windows 报 `EPERM`、`unlink xxx.exe`
-- 全局安装目录下残留临时目录
-- 想在清理后顺手检查版本或重装目标 CLI
-
-## 默认支持的目标
-
-当前默认参数面向 Codex：
-
-- 包名：`@openai/codex`
-- 命令名：`codex`
-- 进程名：`codex`
-- 临时目录匹配：`.codex-*`
-
-直接双击 `clean-codex-update.cmd` 即可使用这套默认值。
-
-## 当前主菜单规则
-
-通用主菜单只会显示同时满足以下条件的工具：
-
-- 已检测到
-- 安装来源为 `npm`
-- 具备清理规则
-- 当前命令可执行
-
-其他已知工具不会消失，而是会继续显示在“状态页”中，用于辅助判断：
-
-- 是否已检测到
-- 是否支持清理
-- 是否当前可执行
-- 安装来源是 `npm`、`non-npm` 还是 `unknown`
-
-## 也可以处理其他 npm 全局 CLI
-
-例如：
-
-```bat
-clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel
-```
-
-```bat
-clean-npm-cli-update.cmd -PackageName eslint -CommandName eslint -ProcessName eslint -SkipProcessStop
-```
-
-```bat
-clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-*
-```
-
-说明：
-
-- `PackageName`
-  npm 全局包名，例如 `vercel`、`eslint`、`@openai/codex`
-
-- `CommandName`
-  终端里实际执行的命令名
-
-- `ProcessName`
-  需要停止的进程名。通常与命令名一致
-
-- `TempDirPattern`
-  需要清理的临时目录匹配规则
-
-## 推荐用法
-
-### Codex 常用方式
-
-```bat
-clean-codex-update.cmd -SkipCacheClean
-```
-
-如果只是先预览：
-
-```bat
-clean-codex-update.cmd -WhatIf -SkipCacheClean
-```
-
-### 通用 CLI 方式
-
-直接双击：
-
-```bat
-clean-npm-cli-update.cmd
-```
-
-脚本会：
-
-1. 自动检测当前电脑中已安装的候选 CLI
-2. 只把“已检测到且支持清理”的工具列入主菜单
-3. 提供“查看所有已知工具状态”和“手动输入其他 CLI”
-4. 主菜单仅显示 npm 安装、支持清理且当前可执行的工具
-
-如果你已经明确知道目标，也可以直接带参数运行：
-
-```bat
-clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean
-```
-
-### 清理后顺手重装
-
-```bat
-clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -Reinstall
-```
-
-## Repository Files
+## 快速开始
+
+| 场景 | 命令 / 入口 |
+|---|---|
+| 直接清理 Codex | `clean-codex-update.cmd` |
+| 更稳妥的 Codex 常用方式 | `clean-codex-update.cmd -SkipCacheClean` |
+| 预览 Codex 清理 | `clean-codex-update.cmd -WhatIf -SkipCacheClean` |
+| 打开通用交互菜单 | `clean-npm-cli-update.cmd` |
+| 明确指定通用目标 | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean` |
+
+## 适用场景
+
+| 场景 | 说明 |
+|---|---|
+| `npm install -g` 升级失败 | 清理升级后的临时残留目录 |
+| Windows `EPERM` / `unlink` 报错 | 处理被占用或未清理干净的 CLI 文件 |
+| 全局 npm 目录有 `.xxx-*` 残留 | 删除匹配规则下的临时目录 |
+| 想顺手检查版本或重装 | 支持版本检查和可选重装 |
+
+## 预览与截图
+
+| 项目 | 说明 |
+|---|---|
+| 预览命令 | `clean-codex-update.cmd -WhatIf -SkipCacheClean` |
+| 建议截图 1 | `docs/main-menu.png` |
+| 建议截图 2 | `docs/status-page.png` |
+| 建议截图 3 | `docs/codex-clean-result.png` |
+| Markdown 示例 | `![Main Menu](docs/main-menu.png)` |
+
+## 文件清单
 
 | 文件 | 作用 |
 |---|---|
-| `clean-codex-update.cmd` | Codex 专用入口 |
-| `clean-npm-cli-update.cmd` | 通用交互入口 |
-| `clean-npm-cli-update.ps1` | 通用核心逻辑 |
-| `tools.json` | 已知工具清单与规则配置 |
+| `clean-npm-cli-update.ps1` | 通用主脚本，负责检测、清理、版本检查和可选重装 |
+| `clean-npm-cli-update.cmd` | 通用双击入口，支持交互菜单和手动传参 |
+| `clean-codex-update.cmd` | Codex 专用入口，内置 Codex 默认参数 |
+| `tools.json` | 已知工具清单和规则配置 |
+| `logs/` | 日志目录，默认仅保留最近 3 份 `cleanup_*.log` |
 | `VERSION` | 版本号 |
 | `CHANGELOG.md` | 变更记录 |
 | `LICENSE` | 许可证 |
 
+## 默认目标
+
+| 参数 | 默认值 |
+|---|---|
+| 包名 | `@openai/codex` |
+| 命令名 | `codex` |
+| 进程名 | `codex` |
+| 临时目录匹配 | `.codex-*` |
+
+直接双击 `clean-codex-update.cmd` 即可使用这套默认值。
+
+## 菜单规则
+
+| 条件 | 说明 |
+|---|---|
+| 已检测到 | 本机能检测到命令或配置痕迹 |
+| 安装来源为 `npm` | 非 `npm` 安装来源只放状态页 |
+| 具备清理规则 | 在 `tools.json` 中已定义处理规则 |
+| 当前命令可执行 | 命令在 `PATH` 中可运行 |
+
+| 状态页字段 | 作用 |
+|---|---|
+| 是否已检测到 | 判断本机是否存在该工具 |
+| 是否支持清理 | 判断是否有自动清理规则 |
+| 是否当前可执行 | 判断命令是否能直接运行 |
+| 安装来源 | 判断是 `npm`、`non-npm` 还是 `unknown` |
+
+## 通用 CLI 用法
+
+| 示例场景 | 命令 |
+|---|---|
+| Vercel CLI | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel` |
+| ESLint CLI | `clean-npm-cli-update.cmd -PackageName eslint -CommandName eslint -ProcessName eslint -SkipProcessStop` |
+| 手动指定 Codex 规则 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-*` |
+
+| 字段 | 说明 |
+|---|---|
+| `PackageName` | npm 全局包名，例如 `vercel`、`eslint`、`@openai/codex` |
+| `CommandName` | 终端里实际执行的命令名 |
+| `ProcessName` | 需要停止的进程名，通常与命令名一致 |
+| `TempDirPattern` | 需要清理的临时目录匹配规则 |
+
+## 推荐用法
+
+| 场景 | 推荐命令 |
+|---|---|
+| Codex 常用方式 | `clean-codex-update.cmd -SkipCacheClean` |
+| Codex 预览 | `clean-codex-update.cmd -WhatIf -SkipCacheClean` |
+| 通用交互菜单 | `clean-npm-cli-update.cmd` |
+| 指定通用目标 | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean` |
+| 清理后顺手重装 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -Reinstall` |
+
 ## 参数说明
 
-- `-PackageName`
-  目标 npm 全局包名。默认值是 `@openai/codex`。
-
-- `-CommandName`
-  目标命令名。默认值是 `codex`。
-
-- `-ProcessName`
-  目标进程名。默认值是 `codex`。
-
-- `-TempDirPattern`
-  要删除的临时目录匹配规则。默认值是 `.codex-*`。
-
-- `-VersionArgs`
-  版本检查参数。默认是 `--version`。
-
-- `-WhatIf`
-  预览模式。不真正执行删除、停止进程或 npm 命令。
-
-- `-SkipCacheClean`
-  跳过 `npm cache clean --force`。
-
-- `-Reinstall`
-  清理后重新安装目标 npm 包。
-
-- `-SkipProcessStop`
-  跳过停止目标进程。
+| 参数 | 说明 |
+|---|---|
+| `-PackageName` | 目标 npm 全局包名，默认 `@openai/codex` |
+| `-CommandName` | 目标命令名，默认 `codex` |
+| `-ProcessName` | 目标进程名，默认 `codex` |
+| `-TempDirPattern` | 临时目录匹配规则，默认 `.codex-*` |
+| `-VersionArgs` | 版本检查参数，默认 `--version` |
+| `-WhatIf` | 预览模式，不真正执行删除、停止进程或 npm 命令 |
+| `-SkipCacheClean` | 跳过 `npm cache clean --force` |
+| `-Reinstall` | 清理后重新安装目标 npm 包 |
+| `-SkipProcessStop` | 跳过停止目标进程 |
 
 ## 输出说明
 
-脚本运行时会显示：
+| 标记 | 说明 |
+|---|---|
+| `[检查]` | 环境自检和当前目标信息 |
+| `[1/6]` 到 `[6/6]` | 实际执行步骤 |
+| `[info]` | 关键结果说明 |
+| `[warn]` | 警告信息 |
+| `[success]` | 清理成功完成 |
+| `[failed]` | 清理失败 |
 
-- `[检查]`
-  环境自检和当前目标信息
+| 触发方式 | 行为 |
+|---|---|
+| 未传核心参数 | 通用入口先显示交互菜单 |
+| 双击 Codex 入口 | 直接按 Codex 默认规则执行 |
 
-- `[1/6]` 到 `[6/6]`
-  实际执行步骤
+## 兼容性
 
-- `[info]`
-  关键结果说明
-
-- `[warn]`
-  警告信息
-
-- `[success]`
-  清理成功完成
-
-- `[failed]`
-  清理失败
-
-通用入口在未传核心参数时，还会先显示交互菜单，供你选择目标工具。
-
-## 兼容性说明
-
-这套脚本适用于大多数正常配置的 Windows 电脑，但前提是目标机器满足：
-
-- 已安装 Node.js / npm
-- `npm` 在 `PATH` 中
-- 系统可用 `powershell` 或 `pwsh`
-- 如果要检查版本或重装，目标命令最好也在 `PATH` 中
+| 条件 | 说明 |
+|---|---|
+| 已安装 Node.js / npm | 必需 |
+| `npm` 在 `PATH` 中 | 必需 |
+| 系统可用 `powershell` 或 `pwsh` | 必需 |
+| 目标命令在 `PATH` 中 | 建议，影响版本检查与主菜单可执行判定 |
 
 如果删除失败、重装失败、或 npm 全局目录没有写权限，优先尝试以管理员身份运行。
 
 ## 安全边界
 
-- 主菜单只对 `npm` 安装来源的工具提供自动清理入口。
-- 手动输入模式下，删除操作仍会被限制在 `npm root -g` 范围内。
-- 如果计算出的搜索路径超出 npm 全局目录，脚本会拒绝执行删除。
-- 第一次使用建议先跑 `-WhatIf` 预览。
+| 项目 | 说明 |
+|---|---|
+| 主菜单范围 | 仅对 `npm` 安装来源的工具提供自动清理入口 |
+| 手动输入模式 | 删除操作仍限制在 `npm root -g` 范围内 |
+| 路径保护 | 搜索路径超出 npm 全局目录时拒绝执行删除 |
+| 使用建议 | 第一次使用建议先跑 `-WhatIf` 预览 |
 
-## 不会清理的内容
+## 不处理范围
 
-这个工具不是卸载器，也不是全盘清理工具。它不会删除：
-
-- 你的项目代码
-- 用户目录下与 CLI 无关的配置
-- 其他不相关的 npm 包
-- 非 npm 包管理器安装的工具
+| 不会清理的内容 | 说明 |
+|---|---|
+| 你的项目代码 | 不在清理范围内 |
+| 用户目录下与 CLI 无关的配置 | 不处理 |
+| 其他不相关的 npm 包 | 不处理 |
+| 非 npm 包管理器安装的工具 | 仅检测，不自动清理 |
 
 ## 当前建议
 
-如果你的目标还是 Codex，优先使用：
-
-```bat
-clean-codex-update.cmd -SkipCacheClean
-```
-
-如果你要处理其他 npm 全局 CLI，再改用：
-
-```bat
-clean-npm-cli-update.cmd -PackageName <包名> -CommandName <命令名> -ProcessName <进程名>
-```
+| 目标 | 建议 |
+|---|---|
+| 主要清理 Codex | 优先用 `clean-codex-update.cmd -SkipCacheClean` |
+| 先确认风险 | 先用 `-WhatIf` 预览 |
+| 清理其他 npm CLI | 用 `clean-npm-cli-update.cmd -PackageName <包名> -CommandName <命令名> -ProcessName <进程名>` |
