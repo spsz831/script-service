@@ -1,6 +1,7 @@
 # script-service
 
 个人脚本仓库，用于集中维护各类可复用的 Windows 工具脚本、自动化脚本和开发辅助脚本。
+A curated Windows script collection for CLI maintenance, file processing, system cleanup, and developer helpers.
 
 ## 维护入口
 
