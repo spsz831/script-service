@@ -31,6 +31,17 @@
 | `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | `html-to-pdf/README.md` | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
 | `project-cleaner/` | 扫描并清理常见项目缓存目录 | `project-cleaner/README.md` | `open-project-cleaner.cmd` / `project-cleaner.ps1` |
 
+## Featured Scripts
+
+如果你第一次打开这个仓库，优先看这几个比较有代表性的脚本项目：
+
+| 项目 | 推荐原因 |
+|---|---|
+| `npm-cli-clean/` | 结构最完整，包含交互菜单、配置文件、风险边界和日志机制 |
+| `html-to-png/` | 适合快速导出本地 HTML 长图，使用门槛低 |
+| `port-killer/` | 开发场景高频实用，定位明确 |
+| `project-cleaner/` | 对 Node / Python 项目维护很有帮助 |
+
 ### `npm-cli-clean/`
 
 主要能力：

@@ -50,6 +50,18 @@ clean-npm-cli-update.cmd
 - 状态页截图
 - Codex 清理结果截图
 
+如果后续补图，建议放在：
+
+- `docs/main-menu.png`
+- `docs/status-page.png`
+- `docs/codex-clean-result.png`
+
+Markdown 引用示例：
+
+```md
+![Main Menu](docs/main-menu.png)
+```
+
 当前可先通过以下命令预览而不实际执行：
 
 ```bat

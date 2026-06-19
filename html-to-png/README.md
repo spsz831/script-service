@@ -43,6 +43,19 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml
 powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml .\demo.html -OutputImage .\demo-fullpage.png
 ```
 
+## Preview
+
+建议后续补一张 GUI 选择流程截图或导出结果截图，放在：
+
+- `docs/gui-select.png`
+- `docs/output-example.png`
+
+Markdown 引用示例：
+
+```md
+![GUI Select](docs/gui-select.png)
+```
+
 ## Parameters
 
 - `-InputHtml`

@@ -20,6 +20,19 @@ Version: `1.0.0`
 powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-pdf.ps1 -InputHtml .\demo.html
 ```
 
+## Preview
+
+建议后续补一张导出结果截图或打开 PDF 的示意图，放在：
+
+- `docs/pdf-export.png`
+- `docs/pdf-preview.png`
+
+Markdown 引用示例：
+
+```md
+![PDF Export](docs/pdf-export.png)
+```
+
 ## Notes
 
 - 依赖浏览器无头打印能力
