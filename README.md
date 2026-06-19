@@ -27,6 +27,9 @@
 | `folder-size-report/` | 统计子目录大小并排序输出 | `folder-size-report/README.md` | `open-folder-size-report.cmd` / `folder-size-report.ps1` |
 | `clean-temp-files/` | 清理 Windows 临时目录 | `clean-temp-files/README.md` | `open-clean-temp-files.cmd` / `clean-temp-files.ps1` |
 | `batch-rename/` | 对文件执行批量重命名 | `batch-rename/README.md` | `open-batch-rename.cmd` / `batch-rename.ps1` |
+| `image-batch-convert/` | 批量转换 png/jpg/webp 并缩放 | `image-batch-convert/README.md` | `open-image-batch-convert.cmd` / `image-batch-convert.ps1` |
+| `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | `html-to-pdf/README.md` | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
+| `project-cleaner/` | 扫描并清理常见项目缓存目录 | `project-cleaner/README.md` | `open-project-cleaner.cmd` / `project-cleaner.ps1` |
 
 ### `npm-cli-clean/`
 
