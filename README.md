@@ -10,6 +10,15 @@
 | 工具类型 | CLI 维护、文件处理、系统维护、开发辅助、自动化脚本 |
 | 当前目标 | 结构清晰、可独立使用、带最小文档、尽量减少本机强耦合 |
 
+## 脚本分类总表
+
+| 分类 | 包含项目 | 适用场景 |
+|---|---|---|
+| CLI | `npm-cli-clean` | 清理 npm 全局 CLI 升级残留、处理 `EPERM` / `unlink` 类报错 |
+| 文件处理 | `html-to-png`、`html-to-pdf`、`batch-rename`、`image-batch-convert` | HTML 导出、批量改名、图片格式转换与缩放 |
+| 系统维护 | `clean-temp-files`、`folder-size-report`、`port-killer` | 清理临时文件、排查磁盘占用、处理端口占用 |
+| 开发辅助 | `project-cleaner`、`port-killer`、`folder-size-report` | 清理项目缓存、定位开发端口冲突、快速查看项目目录体积 |
+
 ## 项目清单
 
 | 项目 | 说明 | 文档入口 | 主要入口 |
