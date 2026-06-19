@@ -2,6 +2,14 @@
 
 个人脚本仓库，用于集中维护各类可复用的 Windows 工具脚本、自动化脚本和开发辅助脚本。
 
+## 维护入口
+
+| 文档 | 作用 |
+|---|---|
+| [README.md](README.md) | 仓库首页、脚本导航、依赖和状态总览 |
+| [RELEASE_GUIDE.md](RELEASE_GUIDE.md) | 发布前检查、更新预览图、新增脚本子项目的维护说明 |
+| [tools/generate-readme-previews.ps1](tools/generate-readme-previews.ps1) | 生成根 README 和部分子项目 README 使用的预览图 |
+
 ## 快速开始
 
 | 步骤 | 你要做什么 | 建议动作 |
