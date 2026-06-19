@@ -40,10 +40,10 @@ Version: `1.0.0`
 | 项目 | 说明 |
 |---|---|
 | 预览命令 | `clean-codex-update.cmd -WhatIf -SkipCacheClean` |
-| 建议截图 1 | `docs/main-menu.png` |
-| 建议截图 2 | `docs/status-page.png` |
-| 建议截图 3 | `docs/codex-clean-result.png` |
-| Markdown 示例 | `![Main Menu](docs/main-menu.png)` |
+| 当前示例图 | `docs/codex-clean-result.png` |
+| 后续可补 | `docs/main-menu.png`、`docs/status-page.png` |
+
+![Codex Clean Result](docs/codex-clean-result.png)
 
 ## 文件清单
 

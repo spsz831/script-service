@@ -33,9 +33,10 @@ Version: `1.0.0`
 
 | 项目 | 说明 |
 |---|---|
-| 建议截图 1 | `docs/gui-select.png` |
-| 建议截图 2 | `docs/output-example.png` |
-| Markdown 示例 | `![GUI Select](docs/gui-select.png)` |
+| 当前示例图 | `docs/output-example.png` |
+| 后续可补 | `docs/gui-select.png` |
+
+![Output Example](docs/output-example.png)
 
 ## 参数说明
 

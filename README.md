@@ -10,6 +10,12 @@
 | 2 | 找到对应的脚本目录 | 再看 `推荐使用路径` 或 `项目清单`，进入最接近目标的子目录 |
 | 3 | 按子项目说明运行 | 优先双击对应 `.cmd` 入口，或按子目录 `README.md` 中的 PowerShell 命令运行 |
 
+## 预览图
+
+| `npm-cli-clean` | `html-to-png` | `project-cleaner` |
+|---|---|---|
+| ![npm-cli-clean preview](docs/previews/npm-cli-clean.png) | ![html-to-png preview](docs/previews/html-to-png.png) | ![project-cleaner preview](docs/previews/project-cleaner.png) |
+
 ## 仓库概览
 
 | 项目 | 说明 |

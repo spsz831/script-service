@@ -21,6 +21,15 @@ Version: `1.0.0`
 | 实际清理 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\project-cleaner.ps1 -Path .\ -Clean` |
 | 预览清理动作 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\project-cleaner.ps1 -Path .\ -Clean -WhatIf` |
 
+## 预览与截图
+
+| 项目 | 说明 |
+|---|---|
+| 当前示例图 | `docs/scan-result.png` |
+| 场景 | 扫描模式输出常见缓存目录及体积排序 |
+
+![Scan Result](docs/scan-result.png)
+
 ## 参数说明
 
 | 参数 | 说明 |
