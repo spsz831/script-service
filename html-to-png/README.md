@@ -4,6 +4,17 @@
 
 Version: `1.0.0`
 
+## Overview
+
+| 项目 | 说明 |
+|---|---|
+| 适用平台 | Windows |
+| 主要用途 | 将本地 HTML 文件导出为长图 PNG |
+| 图形界面入口 | `open-html-to-png.cmd` |
+| 命令行入口 | `html-to-png.ps1` |
+| 浏览器依赖 | Edge 或 Chrome |
+| 默认输出 | 同目录下 `-fullpage.png` |
+
 ## Quick Start
 
 ### 图形界面方式
@@ -60,23 +71,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\html-to-png.ps1 -InputHtml
 
 ## Project Files
 
-- `html-to-png.ps1`
-  命令行核心脚本
-
-- `html-to-png-gui.ps1`
-  GUI 选择器脚本
-
-- `open-html-to-png.cmd`
-  双击入口
-
-- `VERSION`
-  版本号
-
-- `CHANGELOG.md`
-  变更记录
-
-- `LICENSE`
-  许可证
+| 文件 | 作用 |
+|---|---|
+| `html-to-png.ps1` | 命令行核心脚本 |
+| `html-to-png-gui.ps1` | GUI 选择器脚本 |
+| `open-html-to-png.cmd` | 双击入口 |
+| `VERSION` | 版本号 |
+| `CHANGELOG.md` | 变更记录 |
+| `LICENSE` | 许可证 |
 
 ## Notes
 

@@ -19,20 +19,12 @@
 
 ## Projects
 
+| 项目 | 说明 | 文档入口 | 主要入口 |
+|---|---|---|---|
+| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | [README](</E:/WorkCodex/脚本文件/script-service/npm-cli-clean/README.md:1>) | `clean-codex-update.cmd` / `clean-npm-cli-update.cmd` |
+| `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | [README](</E:/WorkCodex/脚本文件/script-service/html-to-png/README.md:1>) | `open-html-to-png.cmd` / `html-to-png.ps1` |
+
 ### `npm-cli-clean/`
-
-用于清理 Windows 上通过 `npm -g` 安装的 CLI 工具在升级后留下的常见残留，当前默认兼容 Codex，也支持交互式选择其他 npm CLI。
-
-文档入口：
-
-- [npm-cli-clean/README.md](</E:/WorkCodex/脚本文件/script-service/npm-cli-clean/README.md:1>)
-
-主要文件：
-
-- `clean-codex-update.cmd`
-- `clean-npm-cli-update.cmd`
-- `clean-npm-cli-update.ps1`
-- `tools.json`
 
 主要能力：
 
@@ -44,17 +36,11 @@
 
 ### `html-to-png/`
 
-用于将本地 HTML 文件导出为长图 PNG，支持命令行模式和图形界面文件选择模式。
+主要能力：
 
-文档入口：
-
-- [html-to-png/README.md](</E:/WorkCodex/脚本文件/script-service/html-to-png/README.md:1>)
-
-主要文件：
-
-- `html-to-png.ps1`
-- `html-to-png-gui.ps1`
-- `open-html-to-png.cmd`
+- 图形界面选择本地 HTML 文件并导出 PNG
+- 命令行方式指定输入和输出路径
+- 自动检测 Edge / Chrome 作为截图浏览器
 
 ## Repository Conventions
 

@@ -4,6 +4,18 @@
 
 Version: `1.0.0`
 
+## Overview
+
+| 项目 | 说明 |
+|---|---|
+| 适用平台 | Windows |
+| 主要用途 | 清理 npm 全局 CLI 升级残留 |
+| 默认目标 | `@openai/codex` / `codex` |
+| 通用入口 | `clean-npm-cli-update.cmd` |
+| Codex 专用入口 | `clean-codex-update.cmd` |
+| 核心脚本 | `clean-npm-cli-update.ps1` |
+| 配置文件 | `tools.json` |
+
 ## Quick Start
 
 ### 如果你只想清理 Codex
@@ -179,28 +191,15 @@ clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessN
 
 ## Repository Files
 
-当前子项目主要文件如下：
-
-- `clean-codex-update.cmd`
-  Codex 专用入口
-
-- `clean-npm-cli-update.cmd`
-  通用交互入口
-
-- `clean-npm-cli-update.ps1`
-  通用核心逻辑
-
-- `tools.json`
-  已知工具清单与规则配置
-
-- `VERSION`
-  版本号
-
-- `CHANGELOG.md`
-  变更记录
-
-- `LICENSE`
-  许可证
+| 文件 | 作用 |
+|---|---|
+| `clean-codex-update.cmd` | Codex 专用入口 |
+| `clean-npm-cli-update.cmd` | 通用交互入口 |
+| `clean-npm-cli-update.ps1` | 通用核心逻辑 |
+| `tools.json` | 已知工具清单与规则配置 |
+| `VERSION` | 版本号 |
+| `CHANGELOG.md` | 变更记录 |
+| `LICENSE` | 许可证 |
 
 ## 参数说明
 
