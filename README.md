@@ -8,6 +8,7 @@
 |---|---|
 | [README.md](README.md) | 仓库首页、脚本导航、依赖和状态总览 |
 | [RELEASE_GUIDE.md](RELEASE_GUIDE.md) | 发布前检查、更新预览图、新增脚本子项目的维护说明 |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 外部贡献者如何提脚本、修文档、补截图、保持目录结构一致 |
 | [tools/generate-readme-previews.ps1](tools/generate-readme-previews.ps1) | 生成根 README 和部分子项目 README 使用的预览图 |
 
 ## 快速开始
