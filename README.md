@@ -35,17 +35,17 @@
 
 ## 项目清单
 
-| 项目 | 说明 | 文档入口 | 主要入口 |
-|---|---|---|---|
-| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | [README](npm-cli-clean/README.md) | `clean-codex-update.cmd` / `clean-npm-cli-update.cmd` |
-| `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | [README](html-to-png/README.md) | `open-html-to-png.cmd` / `html-to-png.ps1` |
-| `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | [README](html-to-pdf/README.md) | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
-| `port-killer/` | 查询端口占用并按需结束对应进程 | [README](port-killer/README.md) | `open-port-killer.cmd` / `port-killer.ps1` |
-| `folder-size-report/` | 统计子目录大小并排序输出 | [README](folder-size-report/README.md) | `open-folder-size-report.cmd` / `folder-size-report.ps1` |
-| `clean-temp-files/` | 清理 Windows 临时目录 | [README](clean-temp-files/README.md) | `open-clean-temp-files.cmd` / `clean-temp-files.ps1` |
-| `batch-rename/` | 对文件执行批量重命名 | [README](batch-rename/README.md) | `open-batch-rename.cmd` / `batch-rename.ps1` |
-| `image-batch-convert/` | 批量转换 png/jpg/webp 并缩放 | [README](image-batch-convert/README.md) | `open-image-batch-convert.cmd` / `image-batch-convert.ps1` |
-| `project-cleaner/` | 扫描并清理常见项目缓存目录 | [README](project-cleaner/README.md) | `open-project-cleaner.cmd` / `project-cleaner.ps1` |
+| 项目 | 说明 | 状态 | 关键依赖 | 文档入口 | 主要入口 |
+|---|---|---|---|---|---|
+| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | 已验证 | `npm` | [README](npm-cli-clean/README.md) | `clean-codex-update.cmd` / `clean-npm-cli-update.cmd` |
+| `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | 已验证 | Edge 或 Chrome | [README](html-to-png/README.md) | `open-html-to-png.cmd` / `html-to-png.ps1` |
+| `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | 已验证 | Edge 或 Chrome | [README](html-to-pdf/README.md) | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
+| `port-killer/` | 查询端口占用并按需结束对应进程 | 已验证 | PowerShell 网络命令 | [README](port-killer/README.md) | `open-port-killer.cmd` / `port-killer.ps1` |
+| `folder-size-report/` | 统计子目录大小并排序输出 | 已验证 | PowerShell | [README](folder-size-report/README.md) | `open-folder-size-report.cmd` / `folder-size-report.ps1` |
+| `clean-temp-files/` | 清理 Windows 临时目录 | 已验证 | PowerShell | [README](clean-temp-files/README.md) | `open-clean-temp-files.cmd` / `clean-temp-files.ps1` |
+| `batch-rename/` | 对文件执行批量重命名 | 已验证 | PowerShell | [README](batch-rename/README.md) | `open-batch-rename.cmd` / `batch-rename.ps1` |
+| `image-batch-convert/` | 批量转换 png/jpg/webp 并缩放 | 依赖外部工具 | ImageMagick | [README](image-batch-convert/README.md) | `open-image-batch-convert.cmd` / `image-batch-convert.ps1` |
+| `project-cleaner/` | 扫描并清理常见项目缓存目录 | 已验证 | PowerShell | [README](project-cleaner/README.md) | `open-project-cleaner.cmd` / `project-cleaner.ps1` |
 
 ## 推荐脚本
 
@@ -92,8 +92,16 @@
 | 项目 | 说明 |
 |---|---|
 | 平台优先级 | 当前仓库优先面向 Windows |
-| 常见依赖 | `PowerShell`、`git`、`npm`、浏览器、ImageMagick 等 |
+| 状态说明 | `已验证` 表示已在本机完成基本运行验证；`依赖外部工具` 表示脚本本身可用，但需要额外安装依赖 |
 | 详细边界 | 各子目录的依赖、边界和风险说明应在各自 `README.md` 中维护 |
+
+| 依赖项 | 用到的项目 | 说明 |
+|---|---|---|
+| `PowerShell` | 全部项目 | 基础运行环境 |
+| `npm` / Node.js | `npm-cli-clean` | 用于检测、清理和可选重装 npm 全局 CLI |
+| Edge 或 Chrome | `html-to-png`、`html-to-pdf` | 使用浏览器无头截图或无头打印能力 |
+| ImageMagick | `image-batch-convert` | 用于图片格式转换和缩放 |
+| Windows 网络命令 | `port-killer` | 使用 `Get-NetTCPConnection`、`Get-Process` 等系统命令 |
 
 ## 计划方向
 
