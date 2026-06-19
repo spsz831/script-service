@@ -4,7 +4,7 @@
 
 Version: `1.0.0`
 
-## Overview
+## 概览
 
 | 项目 | 说明 |
 |---|---|
@@ -13,13 +13,21 @@ Version: `1.0.0`
 | 双击入口 | `open-folder-size-report.cmd` |
 | 命令行入口 | `folder-size-report.ps1` |
 
-## Quick Start
+## 快速开始
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\folder-size-report.ps1 -Path E:\WorkCodex
-```
+| 场景 | 命令 / 入口 |
+|---|---|
+| 扫描指定目录 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\folder-size-report.ps1 -Path E:\WorkCodex` |
+| 只看前 10 个目录 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\folder-size-report.ps1 -Path E:\WorkCodex -Top 10` |
 
-## Project Files
+## 参数说明
+
+| 参数 | 说明 |
+|---|---|
+| `-Path` | 可选。要扫描的根目录，默认当前目录 |
+| `-Top` | 可选。输出前多少个子目录，默认 `20` |
+
+## 文件清单
 
 | 文件 | 作用 |
 |---|---|
@@ -28,3 +36,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\folder-size-report.ps1 -Pa
 | `VERSION` | 版本号 |
 | `CHANGELOG.md` | 变更记录 |
 | `LICENSE` | 许可证 |
+
+## 使用说明
+
+| 项目 | 说明 |
+|---|---|
+| 统计范围 | 扫描目标目录的直接子目录，再递归统计各自体积 |
+| 排序规则 | 按 `SizeBytes` 从大到小排序 |
+| 输出字段 | `Name`、`SizeMB`、`FullName` |
+| 适用场景 | 快速找出磁盘空间占用较大的项目目录 |

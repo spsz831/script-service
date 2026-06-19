@@ -4,7 +4,7 @@
 
 Version: `1.0.0`
 
-## Overview
+## 概览
 
 | 项目 | 说明 |
 |---|---|
@@ -13,21 +13,23 @@ Version: `1.0.0`
 | 双击入口 | `open-port-killer.cmd` |
 | 命令行入口 | `port-killer.ps1` |
 
-## Quick Start
+## 快速开始
 
-### 查询端口
+| 场景 | 命令 / 入口 |
+|---|---|
+| 查询端口占用 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000` |
+| 结束占用进程 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -Kill` |
+| 预览结束动作 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -Kill -WhatIf` |
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000
-```
+## 参数说明
 
-### 结束占用进程
+| 参数 | 说明 |
+|---|---|
+| `-Port` | 必填。要检查的本地 TCP 端口，范围 `1-65535` |
+| `-Kill` | 可选。结束占用该端口的进程 |
+| `-WhatIf` | 可选。预览结束动作，不真正停止进程 |
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -Kill
-```
-
-## Project Files
+## 文件清单
 
 | 文件 | 作用 |
 |---|---|
@@ -37,7 +39,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000
 | `CHANGELOG.md` | 变更记录 |
 | `LICENSE` | 许可证 |
 
-## Notes
+## 使用说明
 
-- 当前只处理 TCP 端口
-- `-Kill` 会强制结束进程，执行前应确认目标
+| 项目 | 说明 |
+|---|---|
+| 协议范围 | 当前只处理 TCP 端口 |
+| 输出内容 | 会列出进程 `Id`、`ProcessName` 和 `Path` |
+| 风险提示 | `-Kill` 会强制结束进程，执行前应确认目标 |
+| 使用建议 | 第一次处理陌生端口时，建议先不带 `-Kill` 查看结果 |
