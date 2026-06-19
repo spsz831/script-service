@@ -4,6 +4,46 @@
 
 Version: `1.0.0`
 
+## Quick Start
+
+### 如果你只想清理 Codex
+
+直接双击：
+
+```bat
+clean-codex-update.cmd
+```
+
+更稳妥的常用方式：
+
+```bat
+clean-codex-update.cmd -SkipCacheClean
+```
+
+### 如果你想用通用交互菜单
+
+直接双击：
+
+```bat
+clean-npm-cli-update.cmd
+```
+
+它会自动检测当前电脑上已知且可直接清理的 npm CLI 工具，并提供交互式选择。
+
+## Preview
+
+建议后续在这里补一张菜单截图，例如：
+
+- 主菜单截图
+- 状态页截图
+- Codex 清理结果截图
+
+当前可先通过以下命令预览而不实际执行：
+
+```bat
+clean-codex-update.cmd -WhatIf -SkipCacheClean
+```
+
 ## 文件说明
 
 - `clean-npm-cli-update.ps1`
@@ -49,6 +89,22 @@ Version: `1.0.0`
 - 临时目录匹配：`.codex-*`
 
 直接双击 `clean-codex-update.cmd` 即可使用这套默认值。
+
+## 当前主菜单规则
+
+通用主菜单只会显示同时满足以下条件的工具：
+
+- 已检测到
+- 安装来源为 `npm`
+- 具备清理规则
+- 当前命令可执行
+
+其他已知工具不会消失，而是会继续显示在“状态页”中，用于辅助判断：
+
+- 是否已检测到
+- 是否支持清理
+- 是否当前可执行
+- 安装来源是 `npm`、`non-npm` 还是 `unknown`
 
 ## 也可以处理其他 npm 全局 CLI
 
@@ -120,6 +176,31 @@ clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName ve
 ```bat
 clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -Reinstall
 ```
+
+## Repository Files
+
+当前子项目主要文件如下：
+
+- `clean-codex-update.cmd`
+  Codex 专用入口
+
+- `clean-npm-cli-update.cmd`
+  通用交互入口
+
+- `clean-npm-cli-update.ps1`
+  通用核心逻辑
+
+- `tools.json`
+  已知工具清单与规则配置
+
+- `VERSION`
+  版本号
+
+- `CHANGELOG.md`
+  变更记录
+
+- `LICENSE`
+  许可证
 
 ## 参数说明
 
