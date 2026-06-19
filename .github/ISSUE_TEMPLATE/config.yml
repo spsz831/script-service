@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read Repository README
+    url: https://github.com/spsz831/script-service/blob/main/README.md
+    about: 先看仓库首页，确认是否已有对应脚本、入口、依赖和使用说明。
+  - name: Read Contributing Guide
+    url: https://github.com/spsz831/script-service/blob/main/CONTRIBUTING.md
+    about: 提交新脚本、修文档、补截图前，先看贡献约定和目录结构要求。
+  - name: Read Release Guide
+    url: https://github.com/spsz831/script-service/blob/main/RELEASE_GUIDE.md
+    about: 如果你关注发布、预览图更新或新增脚本项目，请先看维护说明。
