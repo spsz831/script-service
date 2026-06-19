@@ -26,6 +26,14 @@ Version: `1.0.0`
 | 打开通用交互菜单 | `clean-npm-cli-update.cmd` |
 | 明确指定通用目标 | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean` |
 
+## 使用建议
+
+| 场景 | 建议 |
+|---|---|
+| 普通使用 | 优先通过 `.cmd` 入口运行，例如 `clean-codex-update.cmd` 或 `clean-npm-cli-update.cmd` |
+| 带作用域包名 | 如果目标包名类似 `@openai/codex`，更建议走 `.cmd` 入口，不要在外层 PowerShell 中手动拼复杂参数 |
+| 手动调试 `.ps1` | 只建议在明确知道 PowerShell 参数转义行为时使用 |
+
 ## 适用场景
 
 | 场景 | 说明 |
