@@ -42,6 +42,20 @@
 - 基于配置文件维护工具清单
 - 删除范围限制在 npm 全局目录内
 
+### `html-to-png/`
+
+用于将本地 HTML 文件导出为长图 PNG，支持命令行模式和图形界面文件选择模式。
+
+文档入口：
+
+- [html-to-png/README.md](</E:/WorkCodex/脚本文件/script-service/html-to-png/README.md:1>)
+
+主要文件：
+
+- `html-to-png.ps1`
+- `html-to-png-gui.ps1`
+- `open-html-to-png.cmd`
+
 ## Repository Conventions
 
 为了方便后续持续扩展，这个总仓库中的每个脚本子目录，尽量遵循下面的最小结构：
