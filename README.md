@@ -23,6 +23,10 @@
 |---|---|---|---|
 | `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | [README](</E:/WorkCodex/脚本文件/script-service/npm-cli-clean/README.md:1>) | `clean-codex-update.cmd` / `clean-npm-cli-update.cmd` |
 | `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | [README](</E:/WorkCodex/脚本文件/script-service/html-to-png/README.md:1>) | `open-html-to-png.cmd` / `html-to-png.ps1` |
+| `port-killer/` | 查询端口占用并按需结束对应进程 | `port-killer/README.md` | `open-port-killer.cmd` / `port-killer.ps1` |
+| `folder-size-report/` | 统计子目录大小并排序输出 | `folder-size-report/README.md` | `open-folder-size-report.cmd` / `folder-size-report.ps1` |
+| `clean-temp-files/` | 清理 Windows 临时目录 | `clean-temp-files/README.md` | `open-clean-temp-files.cmd` / `clean-temp-files.ps1` |
+| `batch-rename/` | 对文件执行批量重命名 | `batch-rename/README.md` | `open-batch-rename.cmd` / `batch-rename.ps1` |
 
 ### `npm-cli-clean/`
 
