@@ -51,7 +51,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 你的目标 | 建议先看 | 推荐入口 |
 |---|---|---|
-| 清理 Codex 或其他 npm CLI 升级残留 | `npm-cli-clean/` | `clean-codex-update.cmd` 或 `clean-npm-cli-update.cmd` |
+| 清理 Codex 或其他 npm CLI 升级残留 | `npm-cli-clean/` | `clean-codex.cmd` / `clean-codex-reinstall.cmd` / `clean-npm-cli-update.cmd` |
 | 把本地 HTML 页面导出为图片 | `html-to-png/` | `open-html-to-png.cmd` |
 | 把本地 HTML 页面导出为 PDF | `html-to-pdf/` | `open-html-to-pdf.cmd` |
 | 批量修改一批文件名 | `batch-rename/` | `open-batch-rename.cmd` |
@@ -65,7 +65,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 项目 | 说明 | 状态 | 关键依赖 | 文档入口 | 主要入口 |
 |---|---|---|---|---|---|
-| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | 已验证 | `npm` | [README](npm-cli-clean/README.md) | `clean-codex-update.cmd` / `clean-npm-cli-update.cmd` |
+| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | 已验证 | `npm` | [README](npm-cli-clean/README.md) | `clean-codex.cmd` / `clean-codex-reinstall.cmd` / `clean-npm-cli-update.cmd` |
 | `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | 已验证 | Edge 或 Chrome | [README](html-to-png/README.md) | `open-html-to-png.cmd` / `html-to-png.ps1` |
 | `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | 已验证 | Edge 或 Chrome | [README](html-to-pdf/README.md) | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
 | `port-killer/` | 查询端口占用并按需结束对应进程 | 已验证 | PowerShell 网络命令 | [README](port-killer/README.md) | `open-port-killer.cmd` / `port-killer.ps1` |
