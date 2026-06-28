@@ -2,7 +2,7 @@
 
 查询某个 TCP 端口当前被哪个进程占用，并可按需结束对应进程。
 
-Version: `1.2.0`
+Version: `1.2.2`
 
 ## 概览
 
@@ -21,6 +21,7 @@ Version: `1.2.0`
 | 结束占用进程 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -Kill` |
 | 预览结束动作 | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -Kill -WhatIf` |
 | 检测 zombie socket | `powershell -NoProfile -ExecutionPolicy Bypass -File .\port-killer.ps1 -Port 3000 -IncludeZombie` |
+| 双击后先看端口列表 | `open-port-killer.cmd` |
 
 ## 参数说明
 
@@ -46,7 +47,7 @@ Version: `1.2.0`
 | 文件 | 作用 |
 |---|---|
 | `port-killer.ps1` | 核心脚本 |
-| `open-port-killer.cmd` | 双击入口 |
+| `open-port-killer.cmd` | 双击入口，先列当前 LISTENING 端口，再让你输入端口号，并支持连续查询 |
 | `VERSION` | 版本号 |
 | `CHANGELOG.md` | 变更记录 |
 | `LICENSE` | 许可证 |
@@ -60,6 +61,8 @@ Version: `1.2.0`
 | 风险提示 | `-Kill` 会强制结束进程，执行前应确认目标 |
 | 使用建议 | 第一次处理陌生端口时，建议先不带 `-Kill` 查看结果 |
 | 已知限制 | `-Kill` 对 zombie socket 无效（进程已死）|
+
+补充：双击 `open-port-killer.cmd` 时，会先列出当前本机的 LISTENING TCP 端口、PID 和进程名，方便你不记端口号时先查看再输入。查完一个端口后，还可以继续查下一个端口，不会立刻退出窗口。
 
 ## 输出说明
 

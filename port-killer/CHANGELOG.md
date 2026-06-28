@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.2
+
+- 调整 `open-port-killer.cmd` 为循环式交互：查完一个端口后可继续查询下一个端口，不再正常执行后立即关闭窗口。
+- README 同步补充双击入口支持连续查询的说明。
+
+## 1.2.1
+
+- 调整 `open-port-killer.cmd`：双击后先列出当前 LISTENING TCP 端口、PID 和进程名，再提示输入要检查的端口号。
+- README 同步补充双击入口的新交互方式。
+
 ## 1.2.0
 
 - 重构输出：为活进程和 zombie socket 统一输出 `Port`、`State`、`Id` 和 `Recommendation` 等字段。
