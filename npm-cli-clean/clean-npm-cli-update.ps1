@@ -7,7 +7,8 @@ param(
     [string[]]$VersionArgs,
     [switch]$Reinstall,
     [switch]$SkipCacheClean,
-    [switch]$SkipProcessStop
+    [switch]$SkipProcessStop,
+    [int]$LogKeep = 10
 )
 
 $ErrorActionPreference = 'Stop'
@@ -32,7 +33,7 @@ function Write-Log {
 }
 
 function Trim-Logs {
-    param([int]$Keep = 3)
+    param([int]$Keep = 10)
     Get-ChildItem -LiteralPath $logDir -Filter 'cleanup_*.log' -File -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending |
         Select-Object -Skip $Keep |
@@ -140,17 +141,18 @@ function Resolve-CommandPath {
     return $null
 }
 
-function Invoke-CmdCommand {
+function Invoke-NativeCommand {
     param(
         [string]$Label,
-        [string]$CommandLine,
+        [string]$Executable,
+        [string[]]$Arguments,
         [switch]$Quiet
     )
 
     Write-Log $Label
 
     if ($WhatIfPreference) {
-        Write-Log ('[whatif] 已跳过命令: ' + $CommandLine)
+        Write-Log ('[whatif] 已跳过命令: ' + (Join-CommandLine -Executable $Executable -Arguments $Arguments))
         return [pscustomobject]@{
             ExitCode = 0
             StdOut   = @()
@@ -162,7 +164,7 @@ function Invoke-CmdCommand {
     $stderrFile = Join-Path $logDir ('stderr_' + [guid]::NewGuid().ToString() + '.log')
 
     try {
-        $process = Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', $CommandLine -Wait -PassThru -NoNewWindow -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
+        $process = Start-Process -FilePath $Executable -ArgumentList $Arguments -Wait -PassThru -NoNewWindow -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
         $stdout = @()
         $stderr = @()
 
@@ -190,7 +192,8 @@ function Invoke-CmdCommand {
         }
 
         if ($process.ExitCode -ne 0) {
-            throw "命令执行失败，退出码 $($process.ExitCode): $CommandLine"
+            $rendered = Join-CommandLine -Executable $Executable -Arguments $Arguments
+            throw "命令执行失败，退出码 $($process.ExitCode): $rendered"
         }
 
         return [pscustomobject]@{
@@ -238,6 +241,16 @@ function Get-NpmPackageDirectory {
     return Join-Path $NpmGlobalRoot $PackageName
 }
 
+function Get-NpmGlobalBinDirectory {
+    param([string]$NpmGlobalRoot)
+
+    if (-not $NpmGlobalRoot) {
+        return $null
+    }
+
+    Split-Path -Parent $NpmGlobalRoot
+}
+
 function Get-TempSearchDirectory {
     param(
         [string]$NpmGlobalRoot,
@@ -255,6 +268,45 @@ function Get-TempSearchDirectory {
     return $PackageDirectory
 }
 
+function Resolve-CommandPathFromDirectory {
+    param(
+        [string]$DirectoryPath,
+        [string[]]$Names
+    )
+
+    if (-not $DirectoryPath -or -not (Test-Path -LiteralPath $DirectoryPath)) {
+        return $null
+    }
+
+    foreach ($name in $Names) {
+        $candidatePath = Join-Path $DirectoryPath $name
+        if (Test-Path -LiteralPath $candidatePath) {
+            return $candidatePath
+        }
+    }
+
+    return $null
+}
+
+function Get-CommandPathWithFallback {
+    param(
+        [string[]]$CommandCandidates,
+        [string]$NpmGlobalRoot
+    )
+
+    $commandPath = Resolve-CommandPath $CommandCandidates
+    if ($commandPath) {
+        return $commandPath
+    }
+
+    $npmGlobalBin = Get-NpmGlobalBinDirectory -NpmGlobalRoot $NpmGlobalRoot
+    if ($npmGlobalBin) {
+        return Resolve-CommandPathFromDirectory -DirectoryPath $npmGlobalBin -Names $CommandCandidates
+    }
+
+    return $null
+}
+
 function Get-TempDirectories {
     param(
         [string]$SearchRoot,
@@ -266,6 +318,88 @@ function Get-TempDirectories {
     }
 
     @(Get-ChildItem -LiteralPath $SearchRoot -Directory -Filter $Pattern -ErrorAction SilentlyContinue)
+}
+
+function Get-CodexUserTempDirectory {
+    param(
+        [string]$PackageName,
+        [string]$CommandName
+    )
+
+    if ($PackageName -eq '@openai/codex' -or $CommandName -eq 'codex') {
+        return Join-Path $HOME '.codex\.tmp'
+    }
+
+    return $null
+}
+
+function Get-CodexUserTempWhitelist {
+    param(
+        [string]$PackageName,
+        [string]$CommandName
+    )
+
+    if ($PackageName -eq '@openai/codex' -or $CommandName -eq 'codex') {
+        return @('plugins', 'plugins.sha', 'plugins.sync.lock')
+    }
+
+    return @()
+}
+
+function Clear-DirectoryEntries {
+    param(
+        [string]$DirectoryPath,
+        [string]$Label,
+        [string[]]$AllowedNames
+    )
+
+    if (-not $DirectoryPath) {
+        Write-Log ('[info] 未配置' + $Label + '目录。')
+        return
+    }
+
+    if (-not (Test-Path -LiteralPath $DirectoryPath)) {
+        Write-Log ('[info] 未发现' + $Label + '目录: ' + $DirectoryPath)
+        return
+    }
+
+    $items = @(Get-ChildItem -LiteralPath $DirectoryPath -Force -ErrorAction SilentlyContinue)
+    if ($AllowedNames -and $AllowedNames.Count -gt 0) {
+        $allowedSet = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+        foreach ($allowedName in $AllowedNames) {
+            [void]$allowedSet.Add($allowedName)
+        }
+
+        $skippedItems = @($items | Where-Object { -not $allowedSet.Contains($_.Name) })
+        $items = @($items | Where-Object { $allowedSet.Contains($_.Name) })
+
+        if ($skippedItems.Count -gt 0) {
+            Write-Log ('[info] 已跳过 ' + $skippedItems.Count + ' 个不在白名单中的' + $Label + '条目。')
+        }
+    }
+
+    if ($items.Count -eq 0) {
+        Write-Log ('[info] 未发现可清理的' + $Label + '条目: ' + $DirectoryPath)
+        return
+    }
+
+    Write-Log ('[info] 发现 ' + $items.Count + ' 个' + $Label + '条目:')
+    foreach ($item in $items) {
+        Write-Log ('  - ' + $item.FullName)
+    }
+
+    foreach ($item in $items) {
+        if ($PSCmdlet.ShouldProcess($item.FullName, '删除' + $Label + '条目')) {
+            Remove-Item -LiteralPath $item.FullName -Recurse -Force -ErrorAction SilentlyContinue
+            if (Test-Path -LiteralPath $item.FullName) {
+                Write-Log ('[warn] 删除' + $Label + '条目失败: ' + $item.FullName)
+            } else {
+                Write-Log ('[info] 已删除' + $Label + '条目: ' + $item.FullName)
+            }
+        } else {
+            Write-Log ('[whatif] 将删除' + $Label + '条目: ' + $item.FullName)
+        }
+    }
 }
 
 function Test-PathWithinRoot {
@@ -459,7 +593,7 @@ try {
     if (-not $TempDirPattern) { $TempDirPattern = '.codex-*' }
     if (-not $VersionArgs -or $VersionArgs.Count -eq 0) { $VersionArgs = @('--version') }
 
-    Trim-Logs -Keep 3
+    Trim-Logs -Keep $LogKeep
 
     Write-Log '[config] clean-npm-cli-update.ps1' -NoConsole:(!$showConfigInConsole)
     Write-Log ('[config] PackageName=' + $PackageName) -NoConsole:(!$showConfigInConsole)
@@ -469,6 +603,7 @@ try {
     Write-Log ('[config] Reinstall=' + $Reinstall.IsPresent) -NoConsole:(!$showConfigInConsole)
     Write-Log ('[config] SkipCacheClean=' + $SkipCacheClean.IsPresent) -NoConsole:(!$showConfigInConsole)
     Write-Log ('[config] SkipProcessStop=' + $SkipProcessStop.IsPresent) -NoConsole:(!$showConfigInConsole)
+    Write-Log ('[config] LogKeep=' + $LogKeep) -NoConsole:(!$showConfigInConsole)
     Write-Log ('[config] WhatIf=' + [bool]$WhatIfPreference) -NoConsole:(!$showConfigInConsole)
 
     $npmCommandPath = Resolve-CommandPath @('npm.cmd', 'npm')
@@ -477,7 +612,8 @@ try {
     }
 
     $commandCandidates = @("$CommandName.cmd", "$CommandName.ps1", "$CommandName.exe", $CommandName)
-    $targetCommandPath = Resolve-CommandPath $commandCandidates
+    $npmGlobalRootPreview = Get-NpmGlobalRoot -NpmCommandPath $npmCommandPath
+    $targetCommandPath = Get-CommandPathWithFallback -CommandCandidates $commandCandidates -NpmGlobalRoot $npmGlobalRootPreview
 
     Write-Log '[检查] 环境自检...'
     Write-Log ('[检查] 脚本版本: ' + $scriptVersion)
@@ -488,7 +624,7 @@ try {
     if ($targetCommandPath) {
         Write-Log ('[检查] 已检测到目标命令: ' + $CommandName)
     } else {
-        Write-Log ('[warn] 未在 PATH 中找到目标命令: ' + $CommandName + '。后续将跳过版本检查。')
+        Write-Log ('[warn] 未检测到可执行命令: ' + $CommandName + '。后续将跳过版本检查。')
     }
     Write-Log '[检查] 如遇删除失败或重装失败，请尝试以管理员身份运行。'
 
@@ -497,18 +633,19 @@ try {
         Write-Log ('[info] 目标命令路径: ' + $targetCommandPath) -NoConsole
     }
 
-    $npmGlobalRootPreview = Get-NpmGlobalRoot -NpmCommandPath $npmCommandPath
     if ($npmGlobalRootPreview) {
         $packageDirPreview = Get-NpmPackageDirectory -NpmGlobalRoot $npmGlobalRootPreview -PackageName $PackageName
         $tempSearchRootPreview = Get-TempSearchDirectory -NpmGlobalRoot $npmGlobalRootPreview -PackageName $PackageName -PackageDirectory $packageDirPreview
+        $npmGlobalBinPreview = Get-NpmGlobalBinDirectory -NpmGlobalRoot $npmGlobalRootPreview
         Write-Log ('[检查] 当前 npm 全局目录: ' + $npmGlobalRootPreview)
+        Write-Log ('[检查] 当前 npm 全局命令目录: ' + $npmGlobalBinPreview)
         Write-Log ('[检查] 目标包目录: ' + $packageDirPreview)
         Write-Log ('[检查] 临时目录搜索位置: ' + $tempSearchRootPreview)
     } else {
         Write-Log '[检查] 将在执行时动态解析 npm 全局目录。'
     }
 
-    Write-Log ('[1/6] 停止目标进程 (' + $ProcessName + ')...')
+    Write-Log ('[1/7] 停止目标进程 (' + $ProcessName + ')...')
     if ($WhatIfPreference) {
         Write-Log ('[whatif] 将停止进程: ' + $ProcessName)
     } elseif ($SkipProcessStop) {
@@ -518,7 +655,7 @@ try {
         Write-Log ('[info] 已尝试停止进程: ' + $ProcessName)
     }
 
-    $verifyResult = Invoke-CmdCommand '[2/6] 校验 npm 缓存...' 'npm cache verify' -Quiet
+    $verifyResult = Invoke-NativeCommand '[2/7] 校验 npm 缓存...' $npmCommandPath @('cache', 'verify') -Quiet
     $verifiedLine = $verifyResult.StdOut | Select-String -Pattern '^Content verified:' | Select-Object -First 1
     $indexLine = $verifyResult.StdOut | Select-String -Pattern '^Index entries:' | Select-Object -First 1
     $finishedLine = $verifyResult.StdOut | Select-String -Pattern '^Finished in ' | Select-Object -First 1
@@ -537,9 +674,9 @@ try {
     }
 
     if ($SkipCacheClean) {
-        Write-Log '[3/6] 根据参数跳过清理 npm 缓存 (-SkipCacheClean)。'
+        Write-Log '[3/7] 根据参数跳过清理 npm 缓存 (-SkipCacheClean)。'
     } else {
-        $cleanResult = Invoke-CmdCommand '[3/6] 清理 npm 缓存...' 'npm cache clean --force' -Quiet
+        $cleanResult = Invoke-NativeCommand '[3/7] 清理 npm 缓存...' $npmCommandPath @('cache', 'clean', '--force') -Quiet
         $npmWarnings = @($cleanResult.StdOut + $cleanResult.StdErr | Where-Object { $_ -match '^npm warn ' })
         if ($npmWarnings.Count -gt 0) {
             foreach ($warning in $npmWarnings) {
@@ -550,7 +687,7 @@ try {
         }
     }
 
-    Write-Log ('[4/6] 删除临时目录 (' + $TempDirPattern + ')...')
+    Write-Log ('[4/7] 删除临时目录 (' + $TempDirPattern + ')...')
     $npmGlobalRoot = $npmGlobalRootPreview
     if ($npmGlobalRoot) {
         $packageDir = Get-NpmPackageDirectory -NpmGlobalRoot $npmGlobalRoot -PackageName $PackageName
@@ -593,16 +730,22 @@ try {
         }
     }
 
+    Write-Log '[5/7] 清理 Codex 用户临时目录...'
+    $codexUserTempDir = Get-CodexUserTempDirectory -PackageName $PackageName -CommandName $CommandName
+    $codexUserTempWhitelist = Get-CodexUserTempWhitelist -PackageName $PackageName -CommandName $CommandName
+    if ($codexUserTempDir) {
+        Write-Log ('[info] Codex 用户临时目录: ' + $codexUserTempDir) -NoConsole
+    }
+    Clear-DirectoryEntries -DirectoryPath $codexUserTempDir -Label 'Codex 用户临时' -AllowedNames $codexUserTempWhitelist
+
     if ($Reinstall) {
-        $reinstallCommand = 'npm install -g ' + $PackageName
-        Invoke-CmdCommand ('[5/6] 重新安装 ' + $PackageName + '...') $reinstallCommand | Out-Null
+        Invoke-NativeCommand ('[6/7] 重新安装 ' + $PackageName + '...') $npmCommandPath @('install', '-g', $PackageName) | Out-Null
     } else {
-        Write-Log '[5/6] 跳过重新安装。如需重装请使用 -Reinstall。'
+        Write-Log '[6/7] 跳过重新安装。如需重装请使用 -Reinstall。'
     }
 
     if ($targetCommandPath) {
-        $versionCommand = Join-CommandLine -Executable $CommandName -Arguments $VersionArgs
-        $versionResult = Invoke-CmdCommand ('[6/6] 检查 ' + $CommandName + ' 版本...') $versionCommand -Quiet
+        $versionResult = Invoke-NativeCommand ('[7/7] 检查 ' + $CommandName + ' 版本...') $targetCommandPath $VersionArgs -Quiet
         $lastVersionLine = $versionResult.StdOut | Select-Object -Last 1
         $versionText = if ($null -ne $lastVersionLine) { $lastVersionLine.ToString().Trim() } else { '' }
         if ($versionText) {
@@ -611,18 +754,18 @@ try {
             Write-Log ('[info] ' + $CommandName + ' 版本检查完成。')
         }
     } else {
-        Write-Log ('[6/6] 跳过版本检查，因为未找到命令: ' + $CommandName)
+        Write-Log ('[7/7] 跳过版本检查，因为未检测到命令: ' + $CommandName)
     }
 
     Write-Log '[success] 清理已成功完成。'
     Write-Log ('[log] 日志文件: ' + $logFile)
-    Trim-Logs -Keep 3
+    Trim-Logs -Keep $LogKeep
     exit 0
 }
 catch {
     ($_ | Out-String) | Tee-Object -FilePath $logFile -Append | Out-Host
     Write-Log '[failed] 清理未成功完成。'
     Write-Log ('[log] 日志文件: ' + $logFile)
-    Trim-Logs -Keep 3
+    Trim-Logs -Keep $LogKeep
     exit 1
 }

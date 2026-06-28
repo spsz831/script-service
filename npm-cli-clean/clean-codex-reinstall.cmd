@@ -2,7 +2,6 @@
 setlocal
 set "SCRIPT=%~dp0clean-npm-cli-update.ps1"
 set "PWSH="
-set "ARGS=-PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -SkipProcessStop %*"
 
 if not exist "%SCRIPT%" (
   echo [error] Script not found: %SCRIPT%
@@ -29,7 +28,7 @@ if %errorlevel%==0 (
 
 :run_pwsh
 if defined PWSH (
-  "%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" %ARGS%
+  "%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -SkipCacheClean -Reinstall
   set "EXITCODE=%ERRORLEVEL%"
 ) else (
   echo [error] pwsh lookup failed unexpectedly.
@@ -39,7 +38,7 @@ if defined PWSH (
 goto :done
 
 :run_windows_powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" %ARGS%
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -SkipCacheClean -Reinstall
 set "EXITCODE=%ERRORLEVEL%"
 
 :done
