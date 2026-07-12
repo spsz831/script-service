@@ -51,7 +51,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\generate-readme-prev
 | 路径 | 作用 |
 |---|---|
 | `docs/previews/` | 根 README 使用的总览预览图 |
-| `npm-cli-clean/docs/` | `npm-cli-clean` 项目内展示图 |
+| `codex-windows-repair/docs/` | `codex-windows-repair` 项目内展示图 |
 | `html-to-png/docs/` | `html-to-png` 项目内展示图 |
 | `html-to-pdf/docs/` | `html-to-pdf` 项目内展示图 |
 | `project-cleaner/docs/` | `project-cleaner` 项目内展示图 |

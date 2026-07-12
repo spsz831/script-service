@@ -22,9 +22,9 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 ## 预览图
 
-| `npm-cli-clean` | `html-to-png` |
+| `codex-windows-repair` | `html-to-png` |
 |---|---|
-| ![npm-cli-clean preview](docs/previews/npm-cli-clean.png) | ![html-to-png preview](docs/previews/html-to-png.png) |
+| ![codex-windows-repair preview](docs/previews/codex-windows-repair.png) | ![html-to-png preview](docs/previews/html-to-png.png) |
 
 | `html-to-pdf` | `project-cleaner` |
 |---|---|
@@ -42,7 +42,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 分类 | 包含项目 | 适用场景 |
 |---|---|---|
-| CLI | `npm-cli-clean` | 清理 npm 全局 CLI 升级残留、处理 `EPERM` / `unlink` 类报错 |
+| CLI | `codex-windows-repair` | 清理 Windows 上 Codex CLI 升级后遗症、处理 `EPERM` / `unlink` 类报错 |
 | 文件处理 | `html-to-png`、`html-to-pdf`、`batch-rename`、`image-batch-convert` | HTML 导出、批量改名、图片格式转换与缩放 |
 | 系统维护 | `clean-temp-files`、`folder-size-report`、`port-killer` | 清理临时文件、排查磁盘占用、处理端口占用 |
 | 开发辅助 | `project-cleaner`、`port-killer`、`folder-size-report` | 清理项目缓存、定位开发端口冲突、快速查看项目目录体积 |
@@ -51,7 +51,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 你的目标 | 建议先看 | 推荐入口 |
 |---|---|---|
-| 清理 Codex 或其他 npm CLI 升级残留 | `npm-cli-clean/` | `clean-codex.cmd` / `clean-codex-reinstall.cmd` / `clean-npm-cli-update.cmd` |
+| 清理 Codex 或其他 npm CLI 升级残留 | `codex-windows-repair/` | `clean-codex.cmd` / `clean-codex-cli.ps1` |
 | 把本地 HTML 页面导出为图片 | `html-to-png/` | `open-html-to-png.cmd` |
 | 把本地 HTML 页面导出为 PDF | `html-to-pdf/` | `open-html-to-pdf.cmd` |
 | 批量修改一批文件名 | `batch-rename/` | `open-batch-rename.cmd` |
@@ -65,7 +65,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 项目 | 说明 | 状态 | 关键依赖 | 文档入口 | 主要入口 |
 |---|---|---|---|---|---|
-| `npm-cli-clean/` | 清理 Windows 上 npm 全局 CLI 升级残留 | 已验证 | `npm` | [README](npm-cli-clean/README.md) | `clean-codex.cmd` / `clean-codex-reinstall.cmd` / `clean-npm-cli-update.cmd` |
+| `codex-windows-repair/` | 清理 Windows 上 Codex CLI 升级后遗症 | 已验证 | `npm` | [README](codex-windows-repair/README.md) | `clean-codex.cmd` / `clean-codex-cli.ps1` |
 | `html-to-png/` | 将本地 HTML 文件导出为长图 PNG | 已验证 | Edge 或 Chrome | [README](html-to-png/README.md) | `open-html-to-png.cmd` / `html-to-png.ps1` |
 | `html-to-pdf/` | 将本地 HTML 文件导出为 PDF | 已验证 | Edge 或 Chrome | [README](html-to-pdf/README.md) | `open-html-to-pdf.cmd` / `html-to-pdf.ps1` |
 | `port-killer/` | 查询端口占用并按需结束对应进程 | 已验证 | PowerShell 网络命令 | [README](port-killer/README.md) | `open-port-killer.cmd` / `port-killer.ps1` |
@@ -79,14 +79,14 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 项目 | 推荐原因 |
 |---|---|
-| `npm-cli-clean/` | 结构最完整，包含交互菜单、配置文件、风险边界和日志机制 |
+| `codex-windows-repair/` | 结构最完整，包含状态检测、日志机制和安全重装保护 |
 | `html-to-png/` | 适合快速导出本地 HTML 长图，使用门槛低 |
 | `port-killer/` | 开发场景高频实用，定位明确 |
 | `project-cleaner/` | 对 Node / Python 项目维护很有帮助 |
 
 | 项目 | 代表能力 |
 |---|---|
-| `npm-cli-clean/` | Codex 一键清理、通用 npm CLI 交互式清理、状态检测、配置化工具清单 |
+| `codex-windows-repair/` | Codex 一键清理、状态检测、自动修复、win32 子包缺失补齐 |
 | `html-to-png/` | GUI 选择本地 HTML 文件、命令行导出 PNG、自动检测 Edge / Chrome |
 | `html-to-pdf/` | 本地 HTML 快速导出 PDF，兼容中文路径输出 |
 | `project-cleaner/` | 常见 Node / Python 缓存目录扫描与安全预览删除 |
@@ -109,7 +109,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 
 | 场景 | 建议 |
 |---|---|
-| 只关心 CLI 清理 | 进入 `npm-cli-clean/` |
+| 只关心 Codex Windows 修复 | 进入 `codex-windows-repair/` |
 | 只关心 HTML 导出 | 进入 `html-to-png/` 或 `html-to-pdf/` |
 | 只关心系统维护 | 优先看 `clean-temp-files/`、`port-killer/`、`folder-size-report/` |
 | 只关心批量处理 | 优先看 `batch-rename/`、`image-batch-convert/` |
@@ -126,7 +126,7 @@ A curated Windows script collection for CLI maintenance, file processing, system
 | 依赖项 | 用到的项目 | 说明 |
 |---|---|---|
 | `PowerShell` | 全部项目 | 基础运行环境 |
-| `npm` / Node.js | `npm-cli-clean` | 用于检测、清理和可选重装 npm 全局 CLI |
+| `npm` / Node.js | `codex-windows-repair` | 用于检测、清理和可选重装 Codex CLI |
 | Edge 或 Chrome | `html-to-png`、`html-to-pdf` | 使用浏览器无头截图或无头打印能力 |
 | ImageMagick | `image-batch-convert` | 用于图片格式转换和缩放 |
 | Windows 网络命令 | `port-killer` | 使用 `Get-NetTCPConnection`、`Get-Process` 等系统命令 |

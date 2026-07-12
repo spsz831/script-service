@@ -34,7 +34,7 @@ echo.
 goto :after_mode_parse
 
 :show_help
-echo Codex CLI Repair Helper
+echo Codex Windows Repair
 echo.
 echo Usage:
 echo   clean-codex.cmd

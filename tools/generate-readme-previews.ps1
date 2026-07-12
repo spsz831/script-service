@@ -362,8 +362,8 @@ $projectCleanerLines = @(
     '[success] Scan completed.'
 )
 
-New-TerminalPreview -OutputPath (Join-Path $previewRoot 'npm-cli-clean.png') -Title 'npm-cli-clean' -Lines $npmCliCleanLines
-Copy-Item (Join-Path $previewRoot 'npm-cli-clean.png') (Join-Path $repoRoot 'npm-cli-clean\docs\codex-clean-result.png') -Force
+New-TerminalPreview -OutputPath (Join-Path $previewRoot 'codex-windows-repair.png') -Title 'codex-windows-repair' -Lines $npmCliCleanLines
+Copy-Item (Join-Path $previewRoot 'codex-windows-repair.png') (Join-Path $repoRoot 'codex-windows-repair\docs\codex-clean-result.png') -Force
 
 New-TerminalPreview -OutputPath (Join-Path $previewRoot 'project-cleaner.png') -Title 'project-cleaner' -Lines $projectCleanerLines
 Copy-Item (Join-Path $previewRoot 'project-cleaner.png') (Join-Path $repoRoot 'project-cleaner\docs\scan-result.png') -Force

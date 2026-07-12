@@ -1,4 +1,4 @@
-# npm-cli-clean
+# codex-windows-repair
 
 Windows 下专门用于清理和修复 `@openai/codex` 全局安装残留的脚本。
 

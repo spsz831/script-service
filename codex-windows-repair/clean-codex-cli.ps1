@@ -780,7 +780,7 @@ try {
         }
     }
 
-    Write-Log '[检查] Codex CLI 清理脚本'
+    Write-Log '[检查] Codex Windows Repair'
     Write-Log ('[检查] 脚本版本: ' + $ScriptVersion)
     Write-Log ('[检查] 目标 npm 包: ' + $PackageName)
     Write-Log ('[检查] 只验证模式: ' + $Verify.IsPresent)
