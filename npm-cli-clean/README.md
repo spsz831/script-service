@@ -1,197 +1,234 @@
 # npm-cli-clean
 
-用于清理 Windows 上通过 `npm -g` 安装的 CLI 工具在升级后留下的常见残留，默认兼容 Codex，也可以处理其他 npm 全局 CLI。
+Windows 下专门用于清理和修复 `@openai/codex` 全局安装残留的脚本。
 
-Version: `1.0.6`
+Version: `2.9.1`
 
-## 概览
+## 当前定位
 
-| 项目 | 说明 |
-|---|---|
-| 适用平台 | Windows |
-| 主要用途 | 清理 npm 全局 CLI 升级残留 |
-| 默认目标 | `@openai/codex` / `codex` |
-| 通用入口 | `clean-npm-cli-update.cmd` |
-| Codex 专用入口 | `clean-codex.cmd` |
-| 核心脚本 | `clean-npm-cli-update.ps1` |
-| 配置文件 | `tools.json` |
+这个目录现在只服务一个场景：Codex CLI 升级或重装过程中，`npm` 在 Windows 全局命令目录里留下 `.codex*` 临时残骸，导致 `codex` 命令失效、升级反复卡住、或 shim 未重建完成。
 
-## 快速开始
+同时覆盖另一类常见异常：`@openai/codex` 主包存在，但 Windows 平台依赖 `@openai/codex-win32-x64` 缺失，导致启动时报：
 
-| 场景 | 命令 / 入口 |
-|---|---|
-| 直接清理 Codex | `clean-codex.cmd` |
-| 一键清理后重装 | `clean-codex-reinstall.cmd` |
-| 更稳妥的 Codex 常用方式 | `clean-codex.cmd` |
-| 预览 Codex 清理 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -WhatIf -SkipCacheClean` |
-| 打开通用交互菜单 | `clean-npm-cli-update.cmd` |
-| 明确指定通用目标 | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean` |
+```text
+Missing optional dependency @openai/codex-win32-x64
+```
 
-## 使用建议
+不再维护“通用 npm CLI 清理器”能力，也不再尝试覆盖其他 CLI 的安装形态。
 
-| 场景 | 建议 |
-|---|---|
-| 普通使用 | 优先通过 `.cmd` 入口运行，例如 `clean-codex.cmd` 或 `clean-npm-cli-update.cmd` |
-| 带作用域包名 | 如果目标包名类似 `@openai/codex`，更建议走 `.cmd` 入口，不要在外层 PowerShell 中手动拼复杂参数 |
-| 手动调试 `.ps1` | 只建议在明确知道 PowerShell 参数转义行为时使用 |
-| 通用入口 | `clean-npm-cli-update.cmd` 更适合“先交互再选择”；固定 Codex 场景优先用 `clean-codex.cmd` / `clean-codex-reinstall.cmd` |
-
-## 适用场景
-
-| 场景 | 说明 |
-|---|---|
-| `npm install -g` 升级失败 | 清理升级后的临时残留目录 |
-| Windows `EPERM` / `unlink` 报错 | 处理被占用或未清理干净的 CLI 文件 |
-| 全局 npm 目录有 `.xxx-*` 残留 | 删除匹配规则下的临时目录 |
-| 想顺手检查版本或重装 | 支持版本检查和可选重装 |
-
-## 预览与截图
-
-| 项目 | 说明 |
-|---|---|
-| 预览命令 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -WhatIf -SkipCacheClean` |
-| 当前示例图 | `docs/codex-clean-result.png` |
-| 后续可补 | `docs/main-menu.png`、`docs/status-page.png` |
-
-![Codex Clean Result](docs/codex-clean-result.png)
-
-## 文件清单
+## 保留文件
 
 | 文件 | 作用 |
 |---|---|
-| `clean-npm-cli-update.ps1` | 通用主脚本，负责检测、清理、Codex 用户临时目录清理、版本检查和可选重装 |
-| `clean-npm-cli-update.cmd` | 通用双击入口；无参数时进入交互菜单，有参数时按原样透传到主脚本 |
-| `clean-codex.cmd` | Codex 日常清理入口，固定执行安全清理，适合日常双击使用 |
-| `clean-codex-reinstall.cmd` | Codex 重装入口，执行安全清理后自动重装 Codex |
-| `tools.json` | 已知工具清单和规则配置 |
-| `logs/` | 日志目录，默认保留最近 10 份 `cleanup_*.log` |
+| `clean-codex.cmd` | 唯一入口，适合双击或终端直接运行 |
+| `clean-codex-cli.ps1` | 主脚本，执行 Codex 清理与可选重装 |
 | `VERSION` | 版本号 |
-| `CHANGELOG.md` | 变更记录 |
-| `LICENSE` | 许可证 |
+| `README.md` | 当前使用说明 |
 
-## 默认目标
+## 解决的问题
 
-| 参数 | 默认值 |
+| 场景 | 说明 |
 |---|---|
-| 包名 | `@openai/codex` |
-| 命令名 | `codex` |
-| 进程名 | `codex` |
-| 临时目录匹配 | `.codex-*` |
+| `codex` 命令突然不存在 | `%APPDATA%\npm` 中正式 shim 丢失，只剩 `.codex*` 残留 |
+| `npm install -g @openai/codex` 后卡住 | Windows 下更新被中断或全局入口替换不完整 |
+| 升级后反复报错 | 旧残留未清理，重装没有真正重建入口 |
+| `Missing optional dependency @openai/codex-win32-x64` | 主包在，但 Windows 平台子包缺失 |
+| 想安全地一键修复 | 用固定 Codex 规则执行清理与可选重装 |
 
-直接双击 `clean-codex.cmd` 即可执行日常安全清理。
+## 当前诊断输出
 
-## 菜单规则
+脚本开头会先输出状态分类，便于快速判断故障类型。控制台现在采用中文主导输出，同时保留英文状态码，方便人工判断和脚本解析：
 
-| 条件 | 说明 |
+| 分类 | 含义 |
 |---|---|
-| 已检测到 | 本机能检测到命令或配置痕迹 |
-| 安装来源为 `npm` | 非 `npm` 安装来源只放状态页 |
-| 具备清理规则 | 在 `tools.json` 中已定义处理规则 |
-| 当前命令可执行 | 命令在 `PATH` 中可运行 |
+| `healthy` | 健康：未发现 shim 异常或 win32 子包缺失 |
+| `shim-missing` | shim 缺失：当前未检测到可执行的 `codex` 命令 |
+| `shim-residue` | shim 残留：检测到 `.codex*` 临时残留 |
+| `win32-missing` | win32 子包缺失：`@openai/codex-win32-x64` 缺失 |
 
-| 状态页字段 | 作用 |
-|---|---|
-| 是否已检测到 | 判断本机是否存在该工具 |
-| 是否支持清理 | 判断是否有自动清理规则 |
-| 是否当前可执行 | 判断命令是否能直接运行 |
-| 安装来源 | 判断是 `npm`、`non-npm` 还是 `unknown` |
+控制台输出会显示类似下面的格式：
 
-## 通用 CLI 用法
+```text
+[诊断] 状态分类: 健康 (healthy)
+[诊断] 推荐动作: 无需修复 (none)
+[verify] 版本状态: 已是最新 (up-to-date)
+```
 
-| 示例场景 | 命令 |
-|---|---|
-| Vercel CLI | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel` |
-| ESLint CLI | `clean-npm-cli-update.cmd -PackageName eslint -CommandName eslint -ProcessName eslint -SkipProcessStop` |
-| 手动指定 Codex 规则 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-*` |
+运行时会自动创建 `logs/` 目录并写入日志；目录本身不再作为固定仓库文件保留。
 
-| 字段 | 说明 |
-|---|---|
-| `PackageName` | npm 全局包名，例如 `vercel`、`eslint`、`@openai/codex` |
-| `CommandName` | 终端里实际执行的命令名 |
-| `ProcessName` | 需要停止的进程名，通常与命令名一致 |
-| `TempDirPattern` | 需要清理的临时目录匹配规则 |
+除文本日志外，每次运行还会额外生成一个 `summary_*.json` 摘要文件，记录：
 
-## 推荐用法
+1. 运行模式
+2. 状态分类
+3. 推荐动作
+4. 实际动作
+5. 执行结果
+6. 关键路径状态
+7. win32 平台依赖状态
 
-| 场景 | 推荐命令 |
-|---|---|
-| Codex 常用方式 | `clean-codex.cmd` |
-| Codex 预览 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -WhatIf -SkipCacheClean` |
-| 通用交互菜单 | `clean-npm-cli-update.cmd` |
-| 指定通用目标 | `clean-npm-cli-update.cmd -PackageName vercel -CommandName vercel -ProcessName vercel -SkipCacheClean` |
-| 清理后顺手重装 | `clean-npm-cli-update.cmd -PackageName @openai/codex -CommandName codex -ProcessName codex -TempDirPattern .codex-* -Reinstall` |
+每次运行结束时，脚本还会在控制台和文本日志里输出一段 `takeaway`，用于沉淀本次结论：
 
-## 参数说明
+1. 故障分类
+2. 推荐动作
+3. 实际动作
+4. 网络状态
+5. 版本状态
+6. 下次建议
+
+在真正执行清理或重装前，还会生成一个 `snapshot_*.json` 修复前快照，记录：
+
+1. 修复前 `codex --version`
+2. 修复前 `where codex`
+3. 修复前 `npm list -g @openai/codex --depth=0`
+4. `%APPDATA%\npm` 下 `codex*` / `.codex*` 文件清单
+
+## 用法
+
+### 命令层入口
+
+`clean-codex.cmd` 现在不仅是参数透传壳，也提供清晰的入口模式：
+
+1. 无参数：默认轻清理
+2. `-Verify`：只验证
+3. `-AutoFix`：自动修复
+4. `-Reinstall`：当前窗口重装
+5. `-LaunchReinstall`：新窗口重装
+6. `-Help` / `--help` / `/?`：显示帮助
+
+### 日常清理
+
+```powershell
+.\clean-codex.cmd
+```
+
+默认行为：
+
+1. 停止 `codex` 相关进程
+2. 校验 npm 缓存
+3. 跳过 `npm cache clean`（入口默认带 `-SkipCacheClean`）
+4. 清理 `%APPDATA%\npm` 下 `.codex*` 残留
+5. 清理 `%USERPROFILE%\.codex\.tmp` 白名单项
+6. 检查当前 `codex --version`
+
+### 只验证，不修复
+
+```powershell
+.\clean-codex.cmd -Verify
+```
+
+这个模式只做检查，不执行：
+
+1. 不停止 `codex` 进程
+2. 不清理 npm 缓存
+3. 不删除 `.codex*` 残留
+4. 不重装 Codex
+
+它会输出当前状态分类，以及一组固定检查项：
+
+1. `npm` 命令路径
+2. `npm root -g` 和 npm 全局命令目录
+3. `codex` 包目录
+4. `Get-Command codex` / `where codex`
+5. `codex`、`codex.cmd`、`codex.ps1` 是否存在
+6. `npm list -g @openai/codex --depth=0`
+7. `@openai/codex-win32-x64` 是否存在
+8. `.codex*` 残留数量和明细
+9. 当前 `codex --version`
+10. `npm registry`、`HTTP_PROXY` / `HTTPS_PROXY`
+11. `npm view @openai/codex version` 是否可达
+12. 本地版本与 registry 最新版本是否一致
+
+这样可以区分：
+
+1. 本地安装损坏
+2. 只是 shim 残留
+3. 只是 win32 子包缺失
+4. registry / 代理链路有问题
+5. 当前健康但可升级
+
+### 清理后强制重装
+
+```powershell
+.\clean-codex.cmd -Reinstall
+```
+
+重装会执行：
+
+```powershell
+npm install -g @openai/codex@latest --force
+```
+
+这个模式适合修复 `codex.cmd` / `codex.ps1` 丢失，或者 `shim` 重建失败的场景。
+
+如果只是缺 `@openai/codex-win32-x64`，脚本会优先选择普通重装；只有检测到 shim 异常时，才会改用 `--force`。
+
+如果当前脚本运行在正在使用的 Codex 会话里，`-Reinstall` 会被拒绝执行，并提示你去新开的 PowerShell 窗口里重装，避免“重装自己导致当前会话退出”。
+
+### 自动按推荐策略修复
+
+```powershell
+.\clean-codex.cmd -AutoFix
+```
+
+`-AutoFix` 会根据当前状态自动选择动作：
+
+1. `healthy`：不修复
+2. `shim-missing`：强制重装
+3. `shim-residue`：强制重装
+4. `win32-missing`：普通重装
+
+如果当前在 Codex 会话内执行，`-AutoFix` 也会被拒绝，并提示去新开的 PowerShell 窗口里运行。
+
+### 自动开新窗口重装
+
+```powershell
+.\clean-codex.cmd -LaunchReinstall
+```
+
+这个模式不会在当前窗口里直接重装，而是启动一个新的 PowerShell 窗口，并在新窗口中执行：
+
+```powershell
+.\clean-codex.cmd -Reinstall
+```
+
+适合当前正处于 Codex 会话中、又需要安全重装 Codex 本体的场景。
+
+### 预览模式
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\clean-codex-cli.ps1 -WhatIf
+```
+
+### 可选参数
 
 | 参数 | 说明 |
 |---|---|
-| `-PackageName` | 目标 npm 全局包名，默认 `@openai/codex` |
-| `-CommandName` | 目标命令名，默认 `codex` |
-| `-ProcessName` | 目标进程名，默认 `codex` |
-| `-TempDirPattern` | 临时目录匹配规则，默认 `.codex-*` |
-| `-VersionArgs` | 版本检查参数，默认 `--version` |
-| `-WhatIf` | 预览模式，不真正执行删除、停止进程或 npm 命令 |
+| `-Reinstall` | 清理后强制重装 Codex |
+| `-LaunchReinstall` | 在新 PowerShell 窗口中启动重装 |
+| `-AutoFix` | 按当前诊断结果自动选择修复动作 |
+| `-Verify` | 只验证当前状态，不执行清理或重装 |
 | `-SkipCacheClean` | 跳过 `npm cache clean --force` |
-| `-Reinstall` | 清理后重新安装目标 npm 包 |
-| `-SkipProcessStop` | 跳过停止目标进程 |
-| `-LogKeep` | 保留最近多少份 `cleanup_*.log`，默认 `10` |
+| `-SkipProcessStop` | 跳过停止 `codex` 进程 |
+| `-LogKeep 10` | 日志保留数量 |
+| `-WhatIf` | 只预览，不真正删除或执行重装 |
 
-补充：`clean-codex.cmd` 默认会尝试停止 `codex` 进程，以减少 Windows 下因 `codex.exe` 被占用导致的 `EPERM` / `unlink` 升级失败。
-
-补充：如果你已经判断当前 Codex 安装状态异常，需要“一键清理后重装”，直接使用 `clean-codex-reinstall.cmd`。
-
-## 输出说明
-
-| 标记 | 说明 |
-|---|---|
-| `[检查]` | 环境自检和当前目标信息 |
-| `[1/7]` 到 `[7/7]` | 实际执行步骤 |
-| `[info]` | 关键结果说明 |
-| `[warn]` | 警告信息 |
-| `[success]` | 清理成功完成 |
-| `[failed]` | 清理失败 |
-
-| 触发方式 | 行为 |
-|---|---|
-| 未传核心参数 | 通用入口先显示交互菜单 |
-| 双击 Codex 入口 | 直接按 Codex 默认规则执行 |
-
-## 兼容性
-
-| 条件 | 说明 |
-|---|---|
-| 已安装 Node.js / npm | 必需 |
-| `npm` 在 `PATH` 中 | 必需 |
-| 系统可用 `powershell` 或 `pwsh` | 必需 |
-| 目标命令在 `PATH` 中 | 建议，影响主菜单可执行判定；版本检查会优先尝试 `PATH`，失败后回退到 npm 全局命令目录 |
-
-如果删除失败、重装失败、或 npm 全局目录没有写权限，优先尝试以管理员身份运行。
-
-## 安全边界
+## 设计边界
 
 | 项目 | 说明 |
 |---|---|
-| 主菜单范围 | 仅对 `npm` 安装来源的工具提供自动清理入口 |
-| 手动输入模式 | 删除操作仍限制在 `npm root -g` 范围内 |
-| 路径保护 | 搜索路径超出 npm 全局目录时拒绝执行删除 |
-| Codex 用户临时目录 | 仅在目标为 `@openai/codex` / `codex` 时，额外清理 `%USERPROFILE%\\.codex\\.tmp` 下的子项 |
-| Codex 临时白名单 | 当前仅清理 `plugins`、`plugins.sha`、`plugins.sync.lock`，避免把 `.codex\\.tmp` 下未来新增条目一并删除 |
-| 使用建议 | 第一次使用建议先跑 `-WhatIf` 预览 |
+| 删除范围 | 限制在 npm 全局命令目录里的 `.codex*` 残留 |
+| 用户目录清理 | 仅处理 `%USERPROFILE%\.codex\.tmp` 白名单项 |
+| 不清理内容 | 你的项目代码、其他 npm 包、非 Codex CLI |
+| 适用平台 | Windows |
 
-## 不处理范围
+## 建议
 
-| 不会清理的内容 | 说明 |
-|---|---|
-| 你的项目代码 | 不在清理范围内 |
-| 用户目录下与 CLI 无关的配置 | 不处理 |
-| 其他不相关的 npm 包 | 不处理 |
-| 非 npm 包管理器安装的工具 | 仅检测，不自动清理 |
+如果只是日常修复，直接用 `clean-codex.cmd`。
 
-## 当前建议
+如果已经出现 `codex` 命令丢失、更新被打断、或正式 shim 没生成，用：
 
-| 目标 | 建议 |
-|---|---|
-| 主要清理 Codex | 直接用 `clean-codex.cmd` |
-| 一键清理并重装 Codex | 直接用 `clean-codex-reinstall.cmd` |
-| 先确认风险 | 先用 `-WhatIf` 预览 |
-| 清理其他 npm CLI | 用 `clean-npm-cli-update.cmd -PackageName <包名> -CommandName <命令名> -ProcessName <进程名>` |
+```powershell
+.\clean-codex.cmd -Reinstall
+```
+
+如果脚本提示当前正在 Codex 会话中，请按提示新开一个 PowerShell 窗口再执行上述命令。
