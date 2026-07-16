@@ -2,7 +2,7 @@
 
 Windows 下专门用于清理和修复 `@openai/codex` 全局安装残留的脚本。
 
-Version: `2.9.1`
+Version: `2.9.2`
 
 ## 当前定位
 
@@ -32,6 +32,7 @@ Missing optional dependency @openai/codex-win32-x64
 | `codex` 命令突然不存在 | `%APPDATA%\npm` 中正式 shim 丢失，只剩 `.codex*` 残留 |
 | `npm install -g @openai/codex` 后卡住 | Windows 下更新被中断或全局入口替换不完整 |
 | 升级后反复报错 | 旧残留未清理，重装没有真正重建入口 |
+| `@openai\.codex-*` 旧目录残留 | `npm\node_modules\@openai` 下留下升级中断的临时目录 |
 | `Missing optional dependency @openai/codex-win32-x64` | 主包在，但 Windows 平台子包缺失 |
 | 想安全地一键修复 | 用固定 Codex 规则执行清理与可选重装 |
 
@@ -107,8 +108,9 @@ Missing optional dependency @openai/codex-win32-x64
 2. 校验 npm 缓存
 3. 跳过 `npm cache clean`（入口默认带 `-SkipCacheClean`）
 4. 清理 `%APPDATA%\npm` 下 `.codex*` 残留
-5. 清理 `%USERPROFILE%\.codex\.tmp` 白名单项
-6. 检查当前 `codex --version`
+5. 清理 `%APPDATA%\npm\node_modules\@openai\.codex*` 旧残留
+6. 清理 `%USERPROFILE%\.codex\.tmp` 白名单项
+7. 检查当前 `codex --version`
 
 ### 只验证，不修复
 
@@ -121,7 +123,8 @@ Missing optional dependency @openai/codex-win32-x64
 1. 不停止 `codex` 进程
 2. 不清理 npm 缓存
 3. 不删除 `.codex*` 残留
-4. 不重装 Codex
+4. 不删除 `@openai\.codex*` 旧目录
+5. 不重装 Codex
 
 它会输出当前状态分类，以及一组固定检查项：
 
@@ -133,10 +136,11 @@ Missing optional dependency @openai/codex-win32-x64
 6. `npm list -g @openai/codex --depth=0`
 7. `@openai/codex-win32-x64` 是否存在
 8. `.codex*` 残留数量和明细
-9. 当前 `codex --version`
-10. `npm registry`、`HTTP_PROXY` / `HTTPS_PROXY`
-11. `npm view @openai/codex version` 是否可达
-12. 本地版本与 registry 最新版本是否一致
+9. `@openai\.codex*` 旧目录残留数量和明细
+10. 当前 `codex --version`
+11. `npm registry`、`HTTP_PROXY` / `HTTPS_PROXY`
+12. `npm view @openai/codex version` 是否可达
+13. 本地版本与 registry 最新版本是否一致
 
 这样可以区分：
 

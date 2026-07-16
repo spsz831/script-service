@@ -133,6 +133,7 @@ function Write-Snapshot {
     param(
         [string]$NpmCommandPath,
         [string]$NpmGlobalBin,
+        [string]$NpmGlobalRoot,
         [string]$TargetCommandPath
     )
 
@@ -143,6 +144,7 @@ function Write-Snapshot {
         whereCodex       = @()
         npmList          = @()
         shimEntries      = @()
+        orphanEntries    = @()
     }
 
     if ($TargetCommandPath) {
@@ -168,6 +170,17 @@ function Write-Snapshot {
     if ($NpmGlobalBin -and (Test-Path -LiteralPath $NpmGlobalBin)) {
         $snapshot.shimEntries = @(Get-ChildItem -LiteralPath $NpmGlobalBin -Force -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -like 'codex*' -or $_.Name -like '.codex*' } |
+            ForEach-Object {
+                [ordered]@{
+                    name = $_.Name
+                    fullName = $_.FullName
+                    lastWriteTime = $_.LastWriteTime.ToString('o')
+                }
+            })
+    }
+
+    if ($NpmGlobalRoot) {
+        $snapshot.orphanEntries = @(Get-CodexNpmOrphanResidueEntries -NpmGlobalRoot $NpmGlobalRoot |
             ForEach-Object {
                 [ordered]@{
                     name = $_.Name
@@ -369,6 +382,42 @@ function Clear-CodexUserTemp {
     }
 
     Remove-Paths -Entries $entries -RootPath $tempDir -Label 'Codex 用户临时白名单项'
+}
+
+function Get-CodexNpmOrphanResidueEntries {
+    param([string]$NpmGlobalRoot)
+
+    if (-not $NpmGlobalRoot) {
+        return @()
+    }
+
+    $openAiRoot = Join-Path $NpmGlobalRoot '@openai'
+    if (-not (Test-Path -LiteralPath $openAiRoot)) {
+        return @()
+    }
+
+    @(Get-ChildItem -LiteralPath $openAiRoot -Force -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like '.codex*' })
+}
+
+function Clear-CodexNpmOrphanResidue {
+    param([string]$NpmGlobalRoot)
+
+    Write-Log '[4b/6] 清理 npm 全局目录下的 @openai\.codex* 旧残留...'
+
+    if (-not $NpmGlobalRoot) {
+        Write-Log '[info] 未提供 npm 全局目录，跳过 @openai\.codex* 旧残留清理。'
+        return @()
+    }
+
+    $entries = Get-CodexNpmOrphanResidueEntries -NpmGlobalRoot $NpmGlobalRoot
+    if (-not $entries -or $entries.Count -eq 0) {
+        Write-Log '[info] 未发现需要清理的 @openai\.codex* 旧残留。'
+        return @()
+    }
+
+    Remove-Paths -Entries $entries -RootPath (Join-Path $NpmGlobalRoot '@openai') -Label '@openai\.codex* 旧残留'
+    return $entries
 }
 
 function Get-CodexHealthStatus {
@@ -655,7 +704,7 @@ function Write-VerifySummary {
     Write-Log ('[verify] 版本状态: ' + (Get-VersionStatusLabel $VersionStatus.Code) + ' (' + $VersionStatus.Code + ')')
     Write-Log ('[verify] 版本说明: ' + $VersionStatus.Message)
     Write-Log ('[verify] win32 平台依赖: ' + (Get-PresenceLabel $HasOptionalDependency) + ' (' + $(if ($HasOptionalDependency) { 'present' } else { 'missing' }) + ')')
-    Write-Log ('[verify] shim 临时残留数量: ' + $ShimRemainders.Count)
+    Write-Log ('[verify] shim / 旧残留数量: ' + $ShimRemainders.Count)
 
     $shimUnix = if ($NpmGlobalBin) { Join-Path $NpmGlobalBin 'codex' } else { $null }
     $shimCmd = if ($NpmGlobalBin) { Join-Path $NpmGlobalBin 'codex.cmd' } else { $null }
@@ -817,13 +866,15 @@ try {
         $shimRemainders = @(Get-ChildItem -LiteralPath $npmGlobalBin -Force -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -like $TempPattern })
     }
+    $orphanResidues = Get-CodexNpmOrphanResidueEntries -NpmGlobalRoot $npmGlobalRoot
+    $allRemainders = @($shimRemainders + $orphanResidues)
     $hasOptionalDependency = Test-CodexOptionalDependency -PackageDirectory $packageDir
-    $healthStatus = Get-CodexHealthStatus -TargetCommandPath $targetCommandPath -ShimRemainders $shimRemainders -HasOptionalDependency $hasOptionalDependency
+    $healthStatus = Get-CodexHealthStatus -TargetCommandPath $targetCommandPath -ShimRemainders $allRemainders -HasOptionalDependency $hasOptionalDependency
     $repairPlan = Get-RepairPlan -HealthStatus $healthStatus -HasOptionalDependency $hasOptionalDependency
     $versionStatus = Get-VersionStatus -LocalVersion $localVersion -LatestVersion $latestVersion -HealthStatus $healthStatus
     $summaryState.codexCommandPath = $targetCommandPath
     $summaryState.hasOptionalDependency = $hasOptionalDependency
-    $summaryState.shimResidueCount = $shimRemainders.Count
+    $summaryState.shimResidueCount = $allRemainders.Count
     $summaryState.statusCode = $healthStatus.Code
     $summaryState.statusMessage = $healthStatus.Message
     $summaryState.recommendedAction = $repairPlan.Action
@@ -884,7 +935,7 @@ try {
         exit 0
     }
 
-    Write-Snapshot -NpmCommandPath $npmCommandPath -NpmGlobalBin $npmGlobalBin -TargetCommandPath $targetCommandPath
+    Write-Snapshot -NpmCommandPath $npmCommandPath -NpmGlobalBin $npmGlobalBin -NpmGlobalRoot $npmGlobalRoot -TargetCommandPath $targetCommandPath
     Write-Log ('[snapshot] 修复前快照: ' + $SnapshotFile)
 
     Write-Log '[1/6] 停止 Codex 进程...'
@@ -912,12 +963,15 @@ try {
         Write-Log '[info] npm 缓存清理完成。'
     }
 
-    Write-Log '[4/6] 清理 npm 全局目录中的 Codex 残留...'
+    Write-Log '[4/6] 清理 npm 全局目录中的 Codex 残留与旧临时目录...'
     if (-not $npmGlobalBin) {
         Write-Log '[whatif] 将通过 npm 全局命令目录搜索 .codex* 残留。'
     } else {
         Remove-Paths -Entries $shimRemainders -RootPath $npmGlobalBin -Label 'shim 临时残留'
     }
+
+    $orphanResidues = Clear-CodexNpmOrphanResidue -NpmGlobalRoot $npmGlobalRoot
+    $allRemainders = @($shimRemainders + $orphanResidues)
 
     Clear-CodexUserTemp
 
